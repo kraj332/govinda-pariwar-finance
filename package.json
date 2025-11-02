@@ -4,7 +4,7 @@
   "description": "Finance manager for Govinda Pariwar",
   "main": "server.js",
   "scripts": {
-    "start": "node start.js",
+    "start": "node server.js",
     "stop": "node start.js stop",
     "restart": "node start.js restart"
   },

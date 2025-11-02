@@ -452,10 +452,52 @@
                 justify-content: center;
             }
         }
+    <style>
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-box {
+            background: var(--color-surface);
+            padding: 32px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 360px;
+            text-align: center;
+        }
+        .login-box h2 {
+            margin-bottom: 16px;
+        }
+        .login-box input {
+            margin-bottom: 16px;
+        }
+        .app-container {
+            display: none; /* Hidden by default */
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div id="login" class="login-overlay">
+        <div class="login-box">
+            <h2>🔒 Admin Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Enter Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="container app-container">
         <div class="header">
             <h1>GOVINDA PARIWAR</h1>
             <p>Accounts - FY 2025 - 2026</p>
@@ -1437,6 +1479,70 @@
         }
 
         initApp();
+
+        // --- Authentication Logic ---
+        const TOKEN_KEY = 'gpfr_token';
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Invalid password');
+                }
+
+                const { token } = await response.json();
+                localStorage.setItem(TOKEN_KEY, token);
+                document.getElementById('login').style.display = 'none';
+                document.querySelector('.app-container').style.display = 'block';
+                initApp(); // Re-initialize app after login
+
+            } catch (err) {
+                alert(err.message);
+            }
+        });
+
+        // Modify fetch calls to include the token
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            const token = localStorage.getItem(TOKEN_KEY);
+            if (token) {
+                options = options || {};
+                options.headers = options.headers || {};
+                options.headers['Authorization'] = `Bearer ${token}`;
+            }
+            return originalFetch(url, options);
+        };
+
+        // Check if already logged in
+        async function checkLogin() {
+            const token = localStorage.getItem(TOKEN_KEY);
+            if (!token) return; // No token, show login
+
+            try {
+                // Verify token with a protected endpoint
+                const response = await fetch('/api/data');
+                if (response.ok) {
+                    document.getElementById('login').style.display = 'none';
+                    document.querySelector('.app-container').style.display = 'block';
+                    initApp();
+                } else {
+                    localStorage.removeItem(TOKEN_KEY);
+                }
+            } catch (err) {
+                // Server error, stay on login
+            }
+        }
+
+        checkLogin();
+
     </script>
 </body>
 </html>

@@ -5,9 +5,19 @@ const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const { promisify } = require('util');
 
+const createAuth = require('./auth');
+
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+// Auth setup
+const password = process.env.APP_PASSWORD;
+if (!password) {
+    console.warn('WARNING: No APP_PASSWORD set. Access will be open.');
+}
+const auth = createAuth(password || 'admin'); // Fallback for local dev
+
 
 // Database setup
 const DB_FILE = path.join(__dirname, 'gpfr.db');
@@ -111,7 +121,8 @@ async function readAllData() {
 }
 
 // API endpoints
-app.get('/api/data', async (req, res) => {
+app.post('/api/login', auth.login);
+app.get('/api/data', auth.check, async (req, res) => {
     try {
         const data = await readAllData();
         res.json(data);
@@ -121,7 +132,7 @@ app.get('/api/data', async (req, res) => {
     }
 });
 
-app.post('/api/data', async (req, res) => {
+app.post('/api/data', auth.check, async (req, res) => {
     const payload = req.body || {};
     const members = Array.isArray(payload.members) ? payload.members : [];
     const payments = Array.isArray(payload.payments) ? payload.payments : [];
@@ -177,7 +188,7 @@ app.post('/api/data', async (req, res) => {
 });
 
 // Export endpoint
-app.get('/api/export', async (req, res) => {
+app.get('/api/export', auth.check, async (req, res) => {
     try {
         const data = await readAllData();
         const filename = `gpfr-export-${Date.now()}.json`;
