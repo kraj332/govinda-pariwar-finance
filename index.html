@@ -886,16 +886,21 @@
         // Save data to the server
         async function saveDataToServer() {
             try {
-                await fetch('/api/data', {
+                const response = await fetch('/api/data', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ members, payments, expenses })
                 });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to save data on server.');
+                }
             } catch (error) {
                 console.error('Error saving data to server:', error);
-                alert('Could not save data to the server.');
+                alert('Could not save data to the server: ' + error.message);
             }
         }
 
