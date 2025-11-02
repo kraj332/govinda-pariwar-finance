@@ -545,30 +545,22 @@
         <div id="members" class="tab-content">
             <div class="card">
                 <div class="flex-gap mb-16">
-                    <h2>👥 All Members (32)</h2>
+                    <h2>👥 Member Payment Overview</h2>
                     <button class="btn btn-primary btn-sm" onclick="showAddMember()">➕ Add Member</button>
-                    <button class="btn btn-secondary btn-sm export-btn" onclick="exportMembers()">📤 Export CSV</button>
+                    <button class="btn btn-secondary btn-sm export-btn" onclick="exportMembersReport()">📤 Export CSV</button>
                 </div>
 
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="memberSearch" placeholder="Search members..." onkeyup="searchMembers()">
+                    <input type="text" id="memberSearch" placeholder="Search members..." onkeyup="loadMembers()">
                 </div>
 
                 <div class="overflow-x">
-                    <table id="membersTable">
+                    <table id="membersOverviewTable">
                         <thead>
-                            <tr>
-                                <th>Photo</th>
-                                <th>Flat</th>
-                                <th>Name</th>
-                                <th>Monthly Fee</th>
-                                <th>Join Date</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
+                            <tr id="membersOverviewHeader"></tr>
                         </thead>
-                        <tbody id="membersBody"></tbody>
+                        <tbody id="membersOverviewBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -967,7 +959,8 @@
         }
 
         function loadMembers() {
-            const tbody = document.getElementById('membersBody');
+            const tbody = document.getElementById('membersOverviewBody');
+            const thead = document.getElementById('membersOverviewHeader');
             const searchTerm = document.getElementById('memberSearch')?.value.toLowerCase() || '';
             
             const filteredMembers = members.filter(m => 
@@ -975,26 +968,72 @@
                 m.flat.toLowerCase().includes(searchTerm)
             );
 
-            tbody.innerHTML = filteredMembers.map(member => `
-                <tr>
-                    <td>
-                        ${member.photo ? 
-                            `<img src="${member.photo}" class="member-photo" alt="${member.name}">` :
-                            `<div class="member-photo-placeholder">${member.name.charAt(0)}</div>`
-                        }
-                    </td>
-                    <td>${member.flat}</td>
-                    <td><a href="#" onclick="showMemberDetails(${member.id}); return false;">${member.name}</a></td>
-                    <td>${formatDate(member.join)}</td>
-                    <td><span class="badge badge-success">Active</span></td>
-                    <td>
-                        <div class="quick-actions">
-                            <button class="btn btn-sm btn-secondary" onclick="editMember(${member.id})">✏️ Edit</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteMember(${member.id})">🗑️</button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+            // Define financial year (April to March)
+            const currentYear = new Date().getFullYear();
+            const financialYearStartMonth = 3; // April is 3 (0-indexed)
+            const financialYearEndMonth = 2; // March is 2 (0-indexed)
+
+            const months = [];
+            for (let i = 0; i < 12; i++) {
+                const monthDate = new Date(currentYear, financialYearStartMonth + i, 1);
+                months.push(monthDate.toLocaleDateString('en-IN', { month: 'short' }));
+            }
+
+            // Generate table header
+            let headerHtml = `
+                <th>Name</th>
+                <th>Paid Months</th>
+                <th>Balance Due</th>
+            `;
+            months.forEach(month => {
+                headerHtml += `<th>${month}</th>`;
+            });
+            headerHtml += `<th>Actions</th>`;
+            thead.innerHTML = headerHtml;
+
+            // Generate table body
+            tbody.innerHTML = filteredMembers.map(member => {
+                const memberPayments = payments.filter(p => p.memberId === member.id);
+                let paidMonthsCount = 0;
+                let totalPaidAmount = 0;
+
+                const monthlyStatus = {};
+                months.forEach((monthName, index) => {
+                    const monthDate = new Date(currentYear, financialYearStartMonth + index, 1);
+                    const monthKey = `${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, '0')}`;
+                    
+                    const paidThisMonth = memberPayments.some(p => p.month === monthKey);
+                    monthlyStatus[monthKey] = paidThisMonth;
+                    if (paidThisMonth) {
+                        paidMonthsCount++;
+                        totalPaidAmount += member.fee; // Assuming full monthly fee is paid
+                    }
+                });
+
+                const balanceDue = (12 * member.fee) - totalPaidAmount; // Assuming 12 months in FY
+
+                let monthCells = '';
+                months.forEach((monthName, index) => {
+                    const monthDate = new Date(currentYear, financialYearStartMonth + index, 1);
+                    const monthKey = `${monthDate.getFullYear()}-${String(monthDate.getMonth() + 1).padStart(2, '0')}`;
+                    monthCells += `<td>${monthlyStatus[monthKey] ? '✓' : '✗'}</td>`;
+                });
+
+                return `
+                    <tr>
+                        <td>${member.name}</td>
+                        <td>${paidMonthsCount} / 12</td>
+                        <td style="color:${balanceDue > 0 ? 'var(--color-error)' : 'var(--color-success)'}">₹${balanceDue.toLocaleString()}</td>
+                        ${monthCells}
+                        <td>
+                            <div class="quick-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="editMember(${member.id})">✏️ Edit</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteMember(${member.id})">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
 
             updatePaymentMemberDropdown();
         }
