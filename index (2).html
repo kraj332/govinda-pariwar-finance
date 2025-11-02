@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOVINDA PARIWAR - Colony Finance Manager</title>
+    <meta name="description" content="Colony Finance Management System for Govinda Pariwar">
+    <meta name="theme-color" content="#21808d">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiR292aW5kYSBQYXJpd2FyIEZpbmFuY2UiLCJzaG9ydF9uYW1lIjoiR1AgRmluYW5jZSIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZmNmY2Y5IiwidGhlbWVfY29sb3IiOiIjMjE4MDhkIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEwMCclM0UlM0NyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyBmaWxsPSclMjMyMTgwOGQnLyUzRSUzQ3RleHQgeD0nNTAnIHk9JzUwJyBmb250LXNpemU9JzUwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBkeT0nLjNlbScgZmlsbD0nd2hpdGUnJTNFRyUzQy90ZXh0JTNFJTNDL3N2ZyUzRSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==">
+    <style>
+        :root {
+            --color-primary: #21808d;
+            --color-primary-hover: #1d7480;
+            --color-bg: #fcfcf9;
+            --color-surface: #fffffe;
+            --color-text: #13343b;
+            --color-text-light: #626c71;
+            --color-border: #e8e6e1;
+            --color-success: #21808d;
+            --color-error: #c0152f;
+            --color-warning: #e68161;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg: #1f2121;
+                --color-surface: #262828;
+                --color-text: #f5f5f5;
+                --color-text-light: #a7a9a9;
+                --color-border: #3a3c3c;
+                --color-primary: #32b8c6;
+            }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        .header {
+            background: var(--color-surface);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            border: 1px solid var(--color-border);
+            text-align: center;
+            background: linear-gradient(135deg, var(--color-primary) 0%, #1d7480 100%);
+            color: white;
+        }
+
+        .header h1 { 
+            font-size: 28px; 
+            margin-bottom: 8px; 
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p { 
+            font-size: 14px; 
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            background: var(--color-surface);
+            padding: 4px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--color-border);
+            overflow-x: auto;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            color: var(--color-text-light);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+
+        .tab:hover { 
+            color: var(--color-text);
+            background: rgba(33, 128, 141, 0.1);
+        }
+        .tab.active { 
+            background: var(--color-primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(33, 128, 141, 0.3);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .card {
+            background: var(--color-surface);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            border: 1px solid var(--color-border);
+        }
+
+        .card h2 { 
+            font-size: 20px; 
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-box {
+            background: var(--color-surface);
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px solid var(--color-border);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--color-primary);
+        }
+
+        .stat-box.success::before { background: var(--color-success); }
+        .stat-box.error::before { background: var(--color-error); }
+        .stat-box.warning::before { background: var(--color-warning); }
+
+        .stat-box h3 {
+            font-size: 12px;
+            color: var(--color-text-light);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .stat-box .value { 
+            font-size: 32px; 
+            font-weight: 700;
+            line-height: 1;
+        }
+        .stat-box.success .value { color: var(--color-success); }
+        .stat-box.error .value { color: var(--color-error); }
+        .stat-box.warning .value { color: var(--color-warning); }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--color-text);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--color-surface);
+            color: var(--color-text);
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(33, 128, 141, 0.1);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 12px 16px;
+            background: var(--color-border);
+            border: 2px dashed var(--color-primary);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--color-text-light);
+        }
+
+        .file-input-label:hover {
+            background: rgba(33, 128, 141, 0.1);
+            border-color: var(--color-primary-hover);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover { 
+            background: var(--color-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(33, 128, 141, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--color-border);
+            color: var(--color-text);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-text-light);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .btn-danger {
+            background: var(--color-error);
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        th, td {
+            padding: 16px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        th {
+            background: var(--color-primary);
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            background: var(--color-surface);
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover { 
+            background: rgba(33, 128, 141, 0.05);
+            transform: scale(1.01);
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(33, 128, 141, 0.02);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: rgba(33, 128, 141, 0.15);
+            color: var(--color-success);
+            border: 1px solid rgba(33, 128, 141, 0.3);
+        }
+
+        .badge-pending {
+            background: rgba(230, 129, 97, 0.15);
+            color: var(--color-warning);
+            border: 1px solid rgba(230, 129, 97, 0.3);
+        }
+
+        .badge-danger {
+            background: rgba(192, 21, 47, 0.15);
+            color: var(--color-error);
+            border: 1px solid rgba(192, 21, 47, 0.3);
+        }
+
+        .member-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--color-border);
+        }
+
+        .member-photo-placeholder {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .overflow-x { 
+            overflow-x: auto;
+            border-radius: 8px;
+        }
+        .mt-16 { margin-top: 16px; }
+        .mb-16 { margin-bottom: 16px; }
+        .flex-gap { 
+            display: flex; 
+            gap: 12px; 
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            padding-left: 40px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-text-light);
+        }
+
+        .export-btn {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .edit-mode {
+            background: rgba(230, 129, 97, 0.1) !important;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            .header { padding: 16px; }
+            .header h1 { font-size: 22px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: 1fr; }
+            table { font-size: 11px; }
+            th, td { padding: 12px 8px; }
+            .tabs { padding: 2px; }
+            .tab { 
+                padding: 10px 12px;
+                font-size: 12px;
+                min-width: 100px;
+            }
+            .stat-box .value { font-size: 24px; }
+        }
+
+        @media (max-width: 480px) {
+            .quick-actions {
+                flex-direction: column;
+                gap: 4px;
+            }
+            .btn-sm {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>GOVINDA PARIWAR</h1>
+            <p>Accounts - FY 2025 - 2026</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('overview')">📊 Overview</button>
+            <button class="tab" onclick="switchTab('members')">👥 Members</button>
+            <button class="tab" onclick="switchTab('payments')">💰 Payments</button>
+            <button class="tab" onclick="switchTab('monthly')">📅 Monthly Report</button>
+            <button class="tab" onclick="switchTab('expenses')">💸 Expenses</button>
+            <button class="tab" onclick="switchTab('reports')">📋 Reports</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="stats">
+                <div class="stat-box">
+                    <h3>Total Members</h3>
+                    <div class="value" id="totalMembers">32</div>
+                </div>
+                <div class="stat-box success">
+                    <h3>Total Collected</h3>
+                    <div class="value" id="totalCollected">₹46,000</div>
+                </div>
+                <div class="stat-box error">
+                    <h3>Total Expenses</h3>
+                    <div class="value" id="totalExpenses">₹0</div>
+                </div>
+                <div class="stat-box warning">
+                    <h3>Net Balance</h3>
+                    <div class="value" id="netBalance">₹46,000</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📈 Recent Activity</h2>
+                <div id="recentActivity">
+                    <p style="color: var(--color-text-light); text-align: center; padding: 20px;">Recent payments and expenses will appear here</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Members Tab -->
+        <div id="members" class="tab-content">
+            <div class="card">
+                <div class="flex-gap mb-16">
+                    <h2>👥 All Members (32)</h2>
+                    <button class="btn btn-primary btn-sm" onclick="showAddMember()">➕ Add Member</button>
+                    <button class="btn btn-secondary btn-sm export-btn" onclick="exportMembers()">📤 Export CSV</button>
+                </div>
+
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="memberSearch" placeholder="Search members..." onkeyup="searchMembers()">
+                </div>
+
+                <div class="overflow-x">
+                    <table id="membersTable">
+                        <thead>
+                            <tr>
+                                <th>Photo</th>
+                                <th>Flat</th>
+                                <th>Name</th>
+                                <th>Monthly Fee</th>
+                                <th>Join Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membersBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payments Tab -->
+        <div id="payments" class="tab-content">
+            <div class="card">
+                <h2>💰 Record Payment</h2>
+                <form id="paymentForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Member</label>
+                            <select id="paymentMember" required>
+                                <option value="">Select Member</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Month</label>
+                            <input type="month" id="paymentMonth" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount (₹)</label>
+                            <input type="number" id="paymentAmount" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Method</label>
+                            <select id="paymentMethod">
+                                <option>Cash</option>
+                                <option>Bank Transfer</option>
+                                <option>UPI</option>
+                                <option>Cheque</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="paymentNotes" rows="2" placeholder="Optional notes..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">💾 Record Payment</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="flex-gap mb-16">
+                    <h2>💳 Payment History</h2>
+                    <button class="btn btn-secondary btn-sm export-btn" onclick="exportPayments()">📤 Export CSV</button>
+                </div>
+                <div class="overflow-x">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Member</th>
+                                <th>Month</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Report Tab -->
+        <div id="monthly" class="tab-content">
+            <div class="card">
+                <div class="form-group">
+                    <label>📅 Select Month for Report</label>
+                    <input type="month" id="reportMonth" onchange="updateMonthReport()" value="2025-05">
+                </div>
+
+                <div class="stats mt-16">
+                    <div class="stat-box">
+                        <h3>Expected Collection</h3>
+                        <div class="value" id="monthExpected">₹0</div>
+                    </div>
+                    <div class="stat-box success">
+                        <h3>Actual Collection</h3>
+                        <div class="value" id="monthCollected">₹0</div>
+                    </div>
+                    <div class="stat-box error">
+                        <h3>Month Expenses</h3>
+                        <div class="value" id="monthExpenses">₹0</div>
+                    </div>
+                    <div class="stat-box warning">
+                        <h3>Month Balance</h3>
+                        <div class="value" id="monthBalance">₹0</div>
+                    </div>
+                </div>
+
+                <h2 class="mt-16 mb-16">📊 Member Payment Status</h2>
+                <div class="overflow-x">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Flat</th>
+                                <th>Name</th>
+                                <th>Monthly Fee</th>
+                                <th>Amount Paid</th>
+                                <th>Due Amount</th>
+                                <th>Status</th>
+                                <th>Unpaid Months</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthPaymentBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expenses Tab -->
+        <div id="expenses" class="tab-content">
+            <div class="card">
+                <h2>💸 Add Expense</h2>
+                <form id="expenseForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="expenseDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="expenseCategory" required>
+                                <option value="">Select Category</option>
+                                <option>Maintenance</option>
+                                <option>Repair & Renovation</option>
+                                <option>Security</option>
+                                <option>Utilities</option>
+                                <option>Cleaning</option>
+                                <option>Landscaping</option>
+                                <option>Insurance</option>
+                                <option>Legal</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount (₹)</label>
+                            <input type="number" id="expenseAmount" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Vendor/Payee</label>
+                            <input type="text" id="expenseVendor" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="expenseDescription" rows="2" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Receipt/Invoice (Optional)</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="expenseReceipt" class="file-input" accept="image/*,.pdf">
+                            <label for="expenseReceipt" class="file-input-label">
+                                📎 Click to upload receipt or invoice
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">💾 Add Expense</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="flex-gap mb-16">
+                    <h2>📋 All Expenses</h2>
+                    <button class="btn btn-secondary btn-sm export-btn" onclick="exportExpenses()">📤 Export CSV</button>
+                </div>
+                <div class="overflow-x">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Vendor</th>
+                                <th>Amount</th>
+                                <th>Receipt</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expensesBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <div class="card">
+                <h2>📊 Financial Reports</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Report Type</label>
+                        <select id="reportType" onchange="generateReport()">
+                            <option value="">Select Report</option>
+                            <option value="summary">Financial Summary</option>
+                            <option value="defaulters">Payment Defaulters</option>
+                            <option value="expenses">Expense Analysis</option>
+                            <option value="monthly">Monthly Breakdown</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>From Date</label>
+                        <input type="month" id="reportFrom">
+                    </div>
+                    <div class="form-group">
+                        <label>To Date</label>
+                        <input type="month" id="reportTo">
+                    </div>
+                </div>
+                <div class="flex-gap">
+                    <button class="btn btn-primary" onclick="generateReport()">📈 Generate Report</button>
+                    <button class="btn btn-secondary export-btn" onclick="exportReport()">📤 Export Report</button>
+                </div>
+            </div>
+
+            <div class="card" id="reportResults">
+                <h2>📋 Report Results</h2>
+                <div id="reportContent">
+                    <p style="color: var(--color-text-light); text-align: center; padding: 20px;">Select a report type and click generate to view results</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Member Modal -->
+    <div id="addMemberModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; padding:20px;">
+        <div style="background:var(--color-surface); max-width:500px; margin:50px auto; padding:24px; border-radius:12px; max-height:90vh; overflow-y:auto;">
+            <h2>➕ Add New Member</h2>
+            <form id="addMemberForm">
+                <div class="form-group">
+                    <label>Flat Number</label>
+                    <input type="text" id="newFlat" required>
+                </div>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="newName" required>
+                </div>
+                <div class="form-group">
+                    <label>Monthly Fee (₹)</label>
+                    <input type="number" id="newFee" value="1000" required>
+                </div>
+                <div class="form-group">
+                    <label>Join Date</label>
+                    <input type="date" id="newJoinDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Photo (Optional)</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="newPhoto" class="file-input" accept="image/*">
+                        <label for="newPhoto" class="file-input-label">
+                            📷 Click to upload photo
+                        </label>
+                    </div>
+                </div>
+                <div class="flex-gap">
+                    <button type="submit" class="btn btn-primary">💾 Save Member</button>
+                    <button type="button" class="btn btn-secondary" onclick="hideAddMember()">❌ Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+        let members = [];
+        let payments = [];
+        let expenses = [];
+        let nextPaymentId = 1;
+        let nextMemberId = 1;
+
+        // Load data from the server on page load
+        async function loadDataFromServer() {
+            try {
+                const response = await fetch('http://localhost:3000/api/data');
+                const data = await response.json();
+                members = data.members;
+                payments = data.payments;
+                expenses = data.expenses;
+
+                if (payments.length > 0) {
+                    nextPaymentId = Math.max(...payments.map(p => p.id)) + 1;
+                }
+                if (members.length > 0) {
+                    nextMemberId = Math.max(...members.map(m => m.id)) + 1;
+                }
+            } catch (error) {
+                console.error('Error loading data from server:', error);
+                alert('Could not connect to the server. Please make sure it is running.');
+            }
+        }
+
+        // Save data to the server
+        async function saveDataToServer() {
+            try {
+                await fetch('http://localhost:3000/api/data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ members, payments, expenses })
+                });
+            } catch (error) {
+                console.error('Error saving data to server:', error);
+                alert('Could not save data to the server.');
+            }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+
+            if (tabName === 'members') loadMembers();
+            if (tabName === 'payments') loadPayments();
+            if (tabName === 'monthly') updateMonthReport();
+            if (tabName === 'expenses') loadExpenses();
+        }
+
+        function loadMembers() {
+            const tbody = document.getElementById('membersBody');
+            const searchTerm = document.getElementById('memberSearch')?.value.toLowerCase() || '';
+            
+            const filteredMembers = members.filter(m => 
+                m.name.toLowerCase().includes(searchTerm) || 
+                m.flat.toLowerCase().includes(searchTerm)
+            );
+
+            tbody.innerHTML = filteredMembers.map(member => `
+                <tr>
+                    <td>
+                        ${member.photo ? 
+                            `<img src="${member.photo}" class="member-photo" alt="${member.name}">` :
+                            `<div class="member-photo-placeholder">${member.name.charAt(0)}</div>`
+                        }
+                    </td>
+                    <td>${member.flat}</td>
+                    <td>${member.name}</td>
+                    <td>₹${member.fee}</td>
+                    <td>${formatDate(member.join)}</td>
+                    <td><span class="badge badge-success">Active</span></td>
+                    <td>
+                        <div class="quick-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="editMember(${member.id})">✏️ Edit</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteMember(${member.id})">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            updatePaymentMemberDropdown();
+        }
+
+        function searchMembers() {
+            loadMembers();
+        }
+
+        function updatePaymentMemberDropdown() {
+            const select = document.getElementById('paymentMember');
+            if (!select) return; 
+            
+            select.innerHTML = '<option value="">Select Member</option>' +
+                members.map(m => `<option value="${m.id}">${m.flat} - ${m.name}</option>`).join('');
+        }
+
+        function loadPayments() {
+            const tbody = document.getElementById('paymentsBody');
+            if (payments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--color-text-light)">No payments recorded yet</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = payments.slice().reverse().map(payment => {
+                const member = members.find(m => m.id === payment.memberId);
+                return `
+                    <tr>
+                        <td>${formatDate(payment.date)}</td>
+                        <td>${member ? member.name : 'Unknown'}</td>
+                        <td>${formatMonth(payment.month)}</td>
+                        <td>₹${payment.amount}</td>
+                        <td>${payment.method}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" onclick="deletePayment(${payment.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateMonthReport() {
+            const month = document.getElementById('reportMonth').value;
+            if (!month) return;
+
+            const monthPayments = payments.filter(p => p.month === month);
+            const collected = monthPayments.reduce((sum, p) => sum + p.amount, 0);
+            const expected = members.reduce((sum, m) => sum + m.fee, 0);
+            const monthExpenses = expenses.filter(e => e.date.startsWith(month)).reduce((sum, e) => sum + e.amount, 0);
+
+            document.getElementById('monthExpected').textContent = '₹' + expected.toLocaleString();
+            document.getElementById('monthCollected').textContent = '₹' + collected.toLocaleString();
+            document.getElementById('monthExpenses').textContent = '₹' + monthExpenses.toLocaleString();
+            document.getElementById('monthBalance').textContent = '₹' + (collected - monthExpenses).toLocaleString();
+
+            const tbody = document.getElementById('monthPaymentBody');
+            tbody.innerHTML = members.map(member => {
+                const paidPayments = monthPayments.filter(p => p.memberId === member.id);
+                const totalPaid = paidPayments.reduce((sum, p) => sum + p.amount, 0);
+                const due = member.fee - totalPaid;
+                const status = due <= 0 ? 'Paid' : (totalPaid > 0 ? 'Partial' : 'Pending');
+                const unpaidMonths = getUnpaidMonths(member.id, month);
+                
+                return `
+                    <tr>
+                        <td>${member.flat}</td>
+                        <td>${member.name}</td>
+                        <td>₹${member.fee}</td>
+                        <td>₹${totalPaid}</td>
+                        <td style="color:${due > 0 ? 'var(--color-error)' : 'var(--color-success)'}">₹${due}</td>
+                        <td>
+                            <span class="badge badge-${status === 'Paid' ? 'success' : (status === 'Partial' ? 'pending' : 'danger')}">
+                                ${status}
+                            </span>
+                        </td>
+                        <td style="font-size: 11px; color: var(--color-error)">
+                            ${unpaidMonths.length > 0 ? unpaidMonths.join(', ') : '-'}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function getUnpaidMonths(memberId, upToMonth) {
+            const member = members.find(m => m.id === memberId);
+            if (!member) return [];
+
+            const joinDate = new Date(member.join);
+            const endDate = new Date(upToMonth + '-01');
+            const unpaidMonths = [];
+
+            let currentDate = new Date(joinDate);
+            while (currentDate <= endDate) {
+                const monthString = currentDate.getFullYear() + '-' + String(currentDate.getMonth() + 1).padStart(2, '0');
+                const hasPayment = payments.some(p => p.memberId === memberId && p.month === monthString);
+                
+                if (!hasPayment) {
+                    unpaidMonths.push(formatMonth(monthString));
+                }
+                
+                currentDate.setMonth(currentDate.getMonth() + 1);
+            }
+
+            return unpaidMonths;
+        }
+
+        function loadExpenses() {
+            const tbody = document.getElementById('expensesBody');
+            if (expenses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--color-text-light)">No expenses recorded yet</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = expenses.slice().reverse().map(expense => `
+                <tr>
+                    <td>${formatDate(expense.date)}</td>
+                    <td>${expense.category}</td>
+                    <td>${expense.description}</td>
+                    <td>${expense.vendor}</td>
+                    <td>₹${expense.amount.toLocaleString()}</td>
+                    <td>${expense.receipt ? `<a href="${expense.receipt}" target="_blank">📎 View</a>` : '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="deleteExpense(${expenses.indexOf(expense)})">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            updateFinancialSummary();
+        }
+
+        function updateFinancialSummary() {
+            const totalCollected = payments.reduce((sum, p) => sum + p.amount, 0);
+            const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+            const netBalance = totalCollected - totalExpenses;
+
+            document.getElementById('totalCollected').textContent = '₹' + totalCollected.toLocaleString();
+            document.getElementById('totalExpenses').textContent = '₹' + totalExpenses.toLocaleString();
+            document.getElementById('netBalance').textContent = '₹' + netBalance.toLocaleString();
+            
+            const balanceElement = document.getElementById('netBalance');
+            const parentBox = balanceElement.closest('.stat-box');
+            parentBox.className = 'stat-box ' + (netBalance >= 0 ? 'success' : 'error');
+        }
+
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const payment = {
+                id: nextPaymentId++,
+                memberId: parseInt(document.getElementById('paymentMember').value),
+                month: document.getElementById('paymentMonth').value,
+                amount: parseFloat(document.getElementById('paymentAmount').value),
+                method: document.getElementById('paymentMethod').value,
+                date: new Date().toISOString().split('T')[0],
+                notes: document.getElementById('paymentNotes').value
+            };
+            
+            payments.push(payment);
+            saveDataToStorage();
+            loadPayments();
+            updateFinancialSummary();
+            this.reset();
+            alert('💰 Payment recorded successfully!');
+        });
+
+        document.getElementById('expenseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const fileInput = document.getElementById('expenseReceipt');
+            const receiptFile = fileInput.files[0];
+
+            const handleReceipt = (receiptFile, callback) => {
+                if (receiptFile) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        callback(e.target.result);
+                    };
+                    reader.readAsDataURL(receiptFile);
+                } else {
+                    callback(null);
+                }
+            };
+
+            handleReceipt(receiptFile, (base64Receipt) => {
+                const expense = {
+                    date: document.getElementById('expenseDate').value,
+                    category: document.getElementById('expenseCategory').value,
+                    description: document.getElementById('expenseDescription').value,
+                    vendor: document.getElementById('expenseVendor').value,
+                    amount: parseFloat(document.getElementById('expenseAmount').value),
+                    receipt: base64Receipt
+                };
+                
+                expenses.push(expense);
+                saveDataToStorage();
+                loadExpenses();
+                form.reset();
+                alert('💸 Expense added successfully!');
+            });
+        });
+
+        document.getElementById('addMemberForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const photoFile = document.getElementById('newPhoto').files[0];
+            const editId = form.dataset.editId;
+
+            const handlePhoto = (photoFile, callback) => {
+                if (photoFile) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        callback(e.target.result);
+                    };
+                    reader.readAsDataURL(photoFile);
+                } else {
+                    callback(null);
+                }
+            };
+
+            if (editId) {
+                const member = members.find(m => m.id === parseInt(editId));
+                if (member) {
+                    member.flat = document.getElementById('newFlat').value;
+                    member.name = document.getElementById('newName').value;
+                    member.fee = parseFloat(document.getElementById('newFee').value);
+                    member.join = document.getElementById('newJoinDate').value;
+                    
+                    handlePhoto(photoFile, (base64Photo) => {
+                        if (base64Photo) {
+                            member.photo = base64Photo;
+                        }
+                        alert('✏️ Member updated successfully!');
+                        saveDataToStorage();
+                        loadMembers();
+                        hideAddMember();
+                        form.reset();
+                        delete form.dataset.editId;
+                    });
+                }
+            } else {
+                handlePhoto(photoFile, (base64Photo) => {
+                    const member = {
+                        id: nextMemberId++,
+                        flat: document.getElementById('newFlat').value,
+                        name: document.getElementById('newName').value,
+                        fee: parseFloat(document.getElementById('newFee').value),
+                        join: document.getElementById('newJoinDate').value,
+                        photo: base64Photo || ""
+                    };
+                    members.push(member);
+                    document.getElementById('totalMembers').textContent = members.length;
+                    alert('👥 Member added successfully!');
+                    saveDataToStorage();
+                    loadMembers();
+                    hideAddMember();
+                    form.reset();
+                });
+            }
+        });
+
+        function formatDate(dateStr) {
+            return new Date(dateStr).toLocaleDateString('en-IN');
+        }
+
+        function formatMonth(monthStr) {
+            const date = new Date(monthStr + '-01');
+            return date.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
+        }
+
+        function showAddMember() {
+            document.getElementById('addMemberModal').style.display = 'block';
+        }
+
+        function hideAddMember() {
+            const modal = document.getElementById('addMemberModal');
+            modal.style.display = 'none';
+            modal.querySelector('h2').textContent = '➕ Add New Member';
+            document.getElementById('addMemberForm').reset();
+            delete document.getElementById('addMemberForm').dataset.editId;
+        }
+
+        function deleteMember(memberId) {
+            const member = members.find(m => m.id === memberId);
+            if (!member) return; 
+            
+            if (confirm(`Are you sure you want to delete ${member.name}? This will also delete all their payment records.`)) {
+                const memberIndex = members.findIndex(m => m.id === memberId);
+                if (memberIndex !== -1) {
+                    members.splice(memberIndex, 1);
+                }
+                
+                for (let i = payments.length - 1; i >= 0; i--) {
+                    if (payments[i].memberId === memberId) {
+                        payments.splice(i, 1);
+                    }
+                }
+                
+                saveDataToStorage();
+                loadMembers();
+                loadPayments();
+                updateFinancialSummary();
+                document.getElementById('totalMembers').textContent = members.length;
+                alert('🗑️ Member deleted successfully!');
+            }
+        }
+
+        function editMember(memberId) {
+            const member = members.find(m => m.id === memberId);
+            if (!member) return; 
+            
+            document.getElementById('newFlat').value = member.flat;
+            document.getElementById('newName').value = member.name;
+            document.getElementById('newFee').value = member.fee;
+            document.getElementById('newJoinDate').value = member.join;
+            
+            const modal = document.getElementById('addMemberModal');
+            modal.querySelector('h2').textContent = '✏️ Edit Member';
+            document.getElementById('addMemberForm').dataset.editId = memberId;
+            modal.style.display = 'block';
+        }
+
+        function deletePayment(paymentId) {
+            if (confirm('Are you sure you want to delete this payment?')) {
+                const index = payments.findIndex(p => p.id === paymentId);
+                if (index !== -1) {
+                    payments.splice(index, 1);
+                    saveDataToStorage();
+                    loadPayments();
+                    updateFinancialSummary();
+                    alert('🗑️ Payment deleted!');
+                }
+            }
+        }
+
+        function deleteExpense(index) {
+            if (confirm('Are you sure you want to delete this expense?')) {
+                if (index > -1) {
+                    expenses.splice(index, 1);
+                    saveDataToStorage();
+                    loadExpenses();
+                    alert('🗑️ Expense deleted!');
+                }
+            }
+        }
+
+        function exportMembers() {
+            const csvContent = "Flat,Name,Monthly Fee,Join Date,Status\n" +
+                members.map(m => `${m.flat},"${m.name}",${m.fee},${m.join},Active`).join('\n');
+            downloadCSV(csvContent, 'members.csv');
+        }
+
+        function exportPayments() {
+            const csvContent = "Date,Member,Month,Amount,Method,Notes\n" +
+                payments.map(p => {
+                    const member = members.find(m => m.id === p.memberId);
+                    return `${p.date},"${member ? member.name : 'Unknown'}",${p.month},${p.amount},${p.method},"${p.notes || ''}"`;
+                }).join('\n');
+            downloadCSV(csvContent, 'payments.csv');
+        }
+
+        function exportExpenses() {
+            const csvContent = "Date,Category,Description,Vendor,Amount\n" +
+                expenses.map(e => `${e.date},"${e.category}","${e.description}","${e.vendor}",${e.amount}`).join('\n');
+            downloadCSV(csvContent, 'expenses.csv');
+        }
+
+        function exportReport() {
+            alert('Report export functionality - coming soon!');
+        }
+
+        function downloadCSV(content, filename) {
+            const blob = new Blob([content], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function generateReport() {
+            const reportType = document.getElementById('reportType').value;
+            if (!reportType) {
+                alert('Please select a report type');
+                return;
+            }
+
+            let reportHTML = '';
+            switch (reportType) {
+                case 'summary':
+                    reportHTML = generateSummaryReport();
+                    break;
+                case 'defaulters':
+                    reportHTML = generateDefaultersReport();
+                    break;
+                case 'expenses':
+                    reportHTML = generateExpenseReport();
+                    break;
+                case 'monthly':
+                    reportHTML = '<p>Monthly breakdown report</p>';
+                    break;
+            }
+
+            document.getElementById('reportContent').innerHTML = reportHTML;
+        }
+
+        function generateSummaryReport() {
+            const totalMembers = members.length;
+            const totalCollected = payments.reduce((sum, p) => sum + p.amount, 0);
+            const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+            const netBalance = totalCollected - totalExpenses;
+
+            return `
+                <div class="stats">
+                    <div class="stat-box"><h3>Total Members</h3><div class="value">${totalMembers}</div></div>
+                    <div class="stat-box success"><h3>Total Collected</h3><div class="value">₹${totalCollected.toLocaleString()}</div></div>
+                    <div class="stat-box error"><h3>Total Expenses</h3><div class="value">₹${totalExpenses.toLocaleString()}</div></div>
+                    <div class="stat-box ${netBalance >= 0 ? 'success' : 'error'}"><h3>Net Balance</h3><div class="value">₹${netBalance.toLocaleString()}</div></div>
+                </div>
+            `;
+        }
+
+        function generateDefaultersReport() {
+            const currentMonth = '2025-11';
+            const defaulters = members.filter(member => {
+                const unpaidMonths = getUnpaidMonths(member.id, currentMonth);
+                return unpaidMonths.length > 0;
+            });
+
+            return `
+                <h3>Payment Defaulters (${defaulters.length} members)</h3>
+                <table style="width:100%; margin-top:16px;">
+                    <thead><tr><th>Flat</th><th>Name</th><th>Unpaid Months</th><th>Total Due</th></tr></thead>
+                    <tbody>
+                        ${defaulters.map(member => {
+                            const unpaidMonths = getUnpaidMonths(member.id, currentMonth);
+                            const totalDue = unpaidMonths.length * member.fee;
+                            return `
+                                <tr>
+                                    <td>${member.flat}</td>
+                                    <td>${member.name}</td>
+                                    <td style="color: var(--color-error);">${unpaidMonths.join(', ')}</td>
+                                    <td>₹${totalDue.toLocaleString()}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function generateExpenseReport() {
+            const categories = {};
+            expenses.forEach(expense => {
+                if (!categories[expense.category]) categories[expense.category] = 0;
+                categories[expense.category] += expense.amount;
+            });
+
+            return `
+                <h3>Expense Analysis by Category</h3>
+                <table style="width:100%; margin-top:16px;">
+                    <thead><tr><th>Category</th><th>Total Amount</th><th>Percentage</th></tr></thead>
+                    <tbody>
+                        ${Object.entries(categories).map(([category, amount]) => {
+                            const total = Object.values(categories).reduce((sum, val) => sum + val, 0);
+                            const percentage = total > 0 ? ((amount / total) * 100).toFixed(1) : 0;
+                            return `
+                                <tr>
+                                    <td>${category}</td>
+                                    <td>₹${amount.toLocaleString()}</td>
+                                    <td>${percentage}%</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('paymentMonth').value = '2025-11';
+        document.getElementById('newJoinDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('reportFrom').value = '2025-04';
+        document.getElementById('reportTo').value = '2025-11';
+
+        // Load saved data first, then initialize UI
+        loadDataFromStorage();
+        loadMembers();
+        loadPayments();
+        loadExpenses();
+        updateMonthReport();
+        updateFinancialSummary();
+    </script>
+</body>
+</html>
