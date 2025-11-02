@@ -1559,11 +1559,8 @@
             alert(`💰 ${member.name} - ${monthFormatted} marked as paid!`);
             
             // Refresh UI
-            await loadDataFromServer(); // Reload all data
-            loadMembers(); // Refresh members table
-            loadPayments(); // Refresh payments table
-            updateFinancialSummary(); // Update overview stats
-            hideMemberDetails(); // Close the modal after action
+            await initApp(); // Reload all data and refresh all UI components
+            showMemberDetails(memberId); // Re-open member details to show updated status
         }
 
         // Initialize app: try server first, then fall back to localStorage
