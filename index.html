@@ -802,8 +802,8 @@
 
         // Load data from the server on page load
         async function loadDataFromServer() {
-            try {
-                const response = await fetch('http://localhost:3000/api/data');
+        try {
+            const response = await fetch('/api/data');
                 const data = await response.json();
                 members = data.members;
                 payments = data.payments;
@@ -824,7 +824,7 @@
         // Save data to the server
         async function saveDataToServer() {
             try {
-                await fetch('http://localhost:3000/api/data', {
+                await fetch('/api/data', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -834,6 +834,55 @@
             } catch (error) {
                 console.error('Error saving data to server:', error);
                 alert('Could not save data to the server.');
+            }
+        }
+
+        // Save data to localStorage (used when no server is available)
+        function saveDataToStorage() {
+            try {
+                const payload = {
+                    members: members || [],
+                    payments: payments || [],
+                    expenses: expenses || [],
+                    nextMemberId: nextMemberId || 1,
+                    nextPaymentId: nextPaymentId || 1
+                };
+                localStorage.setItem('gpfr_data', JSON.stringify(payload));
+            } catch (err) {
+                console.error('Error saving to localStorage', err);
+            }
+        }
+
+        // Load data from localStorage (fallback when server not used)
+        function loadDataFromStorage() {
+            try {
+                const raw = localStorage.getItem('gpfr_data');
+                if (!raw) {
+                    // initialize with empty arrays if nothing stored
+                    members = members || [];
+                    payments = payments || [];
+                    expenses = expenses || [];
+                    nextMemberId = nextMemberId || 1;
+                    nextPaymentId = nextPaymentId || 1;
+                    return;
+                }
+
+                const data = JSON.parse(raw);
+                members = Array.isArray(data.members) ? data.members : [];
+                payments = Array.isArray(data.payments) ? data.payments : [];
+                expenses = Array.isArray(data.expenses) ? data.expenses : [];
+
+                // restore ID counters safely
+                if (data.nextMemberId) nextMemberId = data.nextMemberId;
+                else if (members.length > 0) nextMemberId = Math.max(...members.map(m => m.id)) + 1;
+
+                if (data.nextPaymentId) nextPaymentId = data.nextPaymentId;
+                else if (payments.length > 0) nextPaymentId = Math.max(...payments.map(p => p.id)) + 1;
+            } catch (err) {
+                console.error('Error loading from localStorage', err);
+                members = members || [];
+                payments = payments || [];
+                expenses = expenses || [];
             }
         }
 
@@ -1365,13 +1414,29 @@
         document.getElementById('reportFrom').value = '2025-04';
         document.getElementById('reportTo').value = '2025-11';
 
-        // Load saved data first, then initialize UI
-        loadDataFromStorage();
-        loadMembers();
-        loadPayments();
-        loadExpenses();
-        updateMonthReport();
-        updateFinancialSummary();
+        // Initialize app: try server first, then fall back to localStorage
+        async function initApp() {
+            // try to load from server (if available)
+            await loadDataFromServer();
+
+            // If server returned no members, try localStorage
+            if (!members || members.length === 0) {
+                loadDataFromStorage();
+            } else {
+                // if we did get data from server, persist a copy locally for offline use
+                saveDataToStorage();
+            }
+
+            // Update UI
+            document.getElementById('totalMembers').textContent = members.length;
+            loadMembers();
+            loadPayments();
+            loadExpenses();
+            updateMonthReport();
+            updateFinancialSummary();
+        }
+
+        initApp();
     </script>
 </body>
 </html>

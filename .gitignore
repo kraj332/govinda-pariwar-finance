@@ -1,0 +1,12 @@
+# Node
+node_modules/
+npm-debug.log
+.env
+
+# Database
+gpfr.db
+
+# IDE/editor files
+.vscode/
+.DS_Store
+Thumbs.db
