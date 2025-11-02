@@ -837,19 +837,19 @@
     <!-- Member Details Modal -->
     <div id="memberDetailsModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; padding:20px;">
         <div style="background:var(--color-surface); max-width:500px; margin:50px auto; padding:24px; border-radius:12px; max-height:90vh; overflow-y:auto;">
-            <h2 id="memberDetailsName"></h2>
-            <div class="stats mt-16">
-                <div class="stat-box success">
+            <h2 id="memberDetailsName" style="margin-bottom: 16px;"></h2>
+            <div style="display: flex; justify-content: space-around; gap: 16px; margin-bottom: 24px;">
+                <div class="stat-box success" style="flex: 1; padding: 16px;">
                     <h3>Total Paid</h3>
-                    <div class="value" id="memberTotalPaid">₹0</div>
+                    <div class="value" id="memberTotalPaid" style="font-size: 24px;">₹0</div>
                 </div>
-                <div class="stat-box error">
+                <div class="stat-box error" style="flex: 1; padding: 16px;">
                     <h3>Total Due</h3>
-                    <div class="value" id="memberTotalDue">₹0</div>
+                    <div class="value" id="memberTotalDue" style="font-size: 24px;">₹0</div>
                 </div>
             </div>
-            <h3 class="mt-16">Unpaid Months</h3>
-            <ul id="memberUnpaidMonths" style="list-style:none; padding:0; margin-top:8px;"></ul>
+            <h3 style="margin-bottom: 12px; font-size: 16px;">Unpaid Months</h3>
+            <ul id="memberUnpaidMonths" style="list-style: none; padding: 0; margin-top: 0;"></ul>
             <button type="button" class="btn btn-secondary mt-16" onclick="hideMemberDetails()">Close</button>
         </div>
     </div>
@@ -1563,7 +1563,7 @@
             loadMembers(); // Refresh members table
             loadPayments(); // Refresh payments table
             updateFinancialSummary(); // Update overview stats
-            showMemberDetails(memberId); // Re-open member details to show updated status
+            hideMemberDetails(); // Close the modal after action
         }
 
         // Initialize app: try server first, then fall back to localStorage
