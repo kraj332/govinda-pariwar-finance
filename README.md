@@ -10,18 +10,29 @@ Simple Node + static frontend app to manage members, payments and expenses.
 npm install
 ```
 
-2. Start the server (default port 3000):
+2. Start the server:
 
 ```bash
+# Start on first available port (starting from 3000)
 npm start
-# or set a different port
-PORT=3001 npm start
+
+# Stop the server
+npm run stop
+
+# Restart (stop + start)
+npm run restart
+
+# Or set a specific port if needed
+PORT=3001 npm start  
 ```
 
 3. Open the frontend in your browser:
 
-- If you serve files via the server: open `http://localhost:3000` (the server serves `index.html` from the project root).
-- Or open `index.html` directly in the browser (file://). When the server is running, the frontend will attempt to fetch `http://localhost:3000/api/data`.
+The server will show you which port it's using when it starts. For example:
+- If it starts on port 3000: open `http://localhost:3000`
+- If port 3000 is busy, it might use 3001: open `http://localhost:3001`
+
+The frontend uses relative API paths, so it will work on any port the server uses.
  - Or open `index.html` directly in the browser (file://). When the server is running, the frontend will attempt to fetch `/api/data` (the app prefers same-origin requests so it works regardless of port).
 
 ### SQLite / production notes

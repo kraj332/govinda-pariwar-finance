@@ -4,11 +4,14 @@
   "description": "Finance manager for Govinda Pariwar",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node start.js",
+    "stop": "node start.js stop",
+    "restart": "node start.js restart"
   },
   "dependencies": {
+    "better-sqlite3": "^8.3.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",
-    "better-sqlite3": "^8.3.0"
+    "sqlite3": "^5.1.7"
   }
 }
