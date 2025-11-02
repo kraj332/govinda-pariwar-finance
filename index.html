@@ -1513,8 +1513,14 @@
             if (unpaidMonths.length > 0) {
                 unpaidMonths.forEach(month => {
                     const li = document.createElement('li');
-                    li.textContent = month;
-                    li.style.color = 'var(--color-error)';
+                    li.style.display = 'flex';
+                    li.style.justifyContent = 'space-between';
+                    li.style.alignItems = 'center';
+                    li.style.marginBottom = '8px';
+                    li.innerHTML = `
+                        <span style="color: var(--color-error);">${month}</span>
+                        <button class="btn btn-sm btn-primary" onclick="markMonthAsPaid(${member.id}, '${month}')">Mark as Paid</button>
+                    `;
                     unpaidMonthsList.appendChild(li);
                 });
             } else {
@@ -1525,6 +1531,39 @@
             }
 
             document.getElementById('memberDetailsModal').style.display = 'block';
+        }
+
+        async function markMonthAsPaid(memberId, monthFormatted) {
+            const member = members.find(m => m.id === memberId);
+            if (!member) return;
+
+            // Convert monthFormatted (e.g., 'Nov 2025') back to 'YYYY-MM'
+            const monthParts = monthFormatted.split(' ');
+            const monthName = monthParts[0];
+            const year = monthParts[1];
+            const monthIndex = new Date(Date.parse(monthName + " 1, 2000")).getMonth() + 1; // Get 1-indexed month
+            const month = `${year}-${String(monthIndex).padStart(2, '0')}`;
+
+            const payment = {
+                id: nextPaymentId++,
+                memberId: memberId,
+                month: month,
+                amount: member.fee,
+                method: 'Cash', // Default method, can be expanded later
+                date: new Date().toISOString().split('T')[0],
+                notes: 'Marked as paid from member details'
+            };
+            
+            payments.push(payment);
+            await saveDataToServer();
+            alert(`💰 ${member.name} - ${monthFormatted} marked as paid!`);
+            
+            // Refresh UI
+            await loadDataFromServer(); // Reload all data
+            loadMembers(); // Refresh members table
+            loadPayments(); // Refresh payments table
+            updateFinancialSummary(); // Update overview stats
+            showMemberDetails(memberId); // Re-open member details to show updated status
         }
 
         // Initialize app: try server first, then fall back to localStorage
