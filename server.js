@@ -39,9 +39,11 @@ async function connectDb() {
     }
 }
 
+const auth = createAuth(password || 'admin', tokensCollection); // New: Initialize auth here
+
 // --- API Endpoints ---
-const auth = createAuth(password || 'admin', tokensCollection); // New: Pass tokensCollection to createAuth
-app.post('/api/login', auth.login);
+
+// Login
 
 // Get all data
 app.get('/api/data', auth.check, async (req, res) => {
