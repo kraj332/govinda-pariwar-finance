@@ -3,6 +3,14 @@ const cors = require('cors');
 const path = require('path');
 const { MongoClient } = require('mongodb');
 
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) {
+    console.error('FATAL ERROR: MONGO_URI environment variable is not set.');
+    process.exit(1);
+}
+
+const client = new MongoClient(MONGO_URI);
+
 const createAuth = require('./auth');
 
 const app = express();
