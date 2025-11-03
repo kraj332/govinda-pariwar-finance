@@ -11,23 +11,20 @@ if (!MONGO_URI) {
 
 const client = new MongoClient(MONGO_URI);
 
-const createAuth = require('./auth');
+
 
 const app = express();
 app.use(express.json({ limit: '10mb' }));
 app.use(cors());
 
 // --- Auth Setup ---
-const password = process.env.APP_PASSWORD;
-if (!password) {
-    console.warn('WARNING: No APP_PASSWORD set. Using default "admin".');
-}
+
 
 // Collections
 let membersCollection;
 let paymentsCollection;
 let expensesCollection;
-let tokensCollection; // New: Declare tokensCollection
+
 
 // --- Database Connection ---
 async function connectDb() {
@@ -38,7 +35,7 @@ async function connectDb() {
         membersCollection = db.collection('members');
         paymentsCollection = db.collection('payments');
         expensesCollection = db.collection('expenses');
-        tokensCollection = db.collection('tokens'); // New: Initialize tokensCollection
+        
         
         console.log('Successfully connected to MongoDB Atlas');
     } catch (err) {
@@ -47,15 +44,15 @@ async function connectDb() {
     }
 }
 
-const auth = createAuth(password || 'admin', tokensCollection); // New: Initialize auth here
+
 
 // --- API Endpoints ---
 
 // Login
-app.post('/api/login', auth.login);
+
 
 // Get all data
-app.get('/api/data', auth.check, async (req, res) => {
+app.get('/api/data', async (req, res) => {
     try {
         const members = await membersCollection.find({}).sort({ id: 1 }).toArray();
         const payments = await paymentsCollection.find({}).sort({ id: 1 }).toArray();
@@ -72,7 +69,7 @@ app.get('/api/data', auth.check, async (req, res) => {
 });
 
 // Save all data
-app.post('/api/data', auth.check, async (req, res) => {
+app.post('/api/data', async (req, res) => {
     const payload = req.body || {};
     const { members = [], payments = [], expenses = [] } = payload;
 
@@ -108,7 +105,7 @@ app.post('/api/data', auth.check, async (req, res) => {
 });
 
 // Export data
-app.get('/api/export', auth.check, async (req, res) => {
+app.get('/api/export', async (req, res) => {
     try {
         const members = await membersCollection.find({}).toArray();
         const payments = await paymentsCollection.find({}).toArray();
