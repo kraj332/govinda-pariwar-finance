@@ -52,6 +52,7 @@ const auth = createAuth(password || 'admin', tokensCollection); // New: Initiali
 // --- API Endpoints ---
 
 // Login
+app.post('/api/login', auth.login);
 
 // Get all data
 app.get('/api/data', auth.check, async (req, res) => {
