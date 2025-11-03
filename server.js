@@ -14,22 +14,12 @@ const password = process.env.APP_PASSWORD;
 if (!password) {
     console.warn('WARNING: No APP_PASSWORD set. Using default "admin".');
 }
-const auth = createAuth(password || 'admin');
-
-// --- Database Setup ---
-const MONGO_URI = process.env.MONGO_URI;
-if (!MONGO_URI) {
-    console.error('FATAL ERROR: MONGO_URI environment variable is not set.');
-    process.exit(1);
-}
-
-const client = new MongoClient(MONGO_URI);
-let db;
 
 // Collections
 let membersCollection;
 let paymentsCollection;
 let expensesCollection;
+let tokensCollection; // New: Declare tokensCollection
 
 // --- Database Connection ---
 async function connectDb() {
@@ -40,6 +30,7 @@ async function connectDb() {
         membersCollection = db.collection('members');
         paymentsCollection = db.collection('payments');
         expensesCollection = db.collection('expenses');
+        tokensCollection = db.collection('tokens'); // New: Initialize tokensCollection
         
         console.log('Successfully connected to MongoDB Atlas');
     } catch (err) {
@@ -49,8 +40,7 @@ async function connectDb() {
 }
 
 // --- API Endpoints ---
-
-// Login
+const auth = createAuth(password || 'admin', tokensCollection); // New: Pass tokensCollection to createAuth
 app.post('/api/login', auth.login);
 
 // Get all data
