@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config();
 const cors = require('cors');
 const path = require('path');
 const { MongoClient } = require('mongodb');
@@ -11,137 +12,117 @@ if (!MONGO_URI) {
 
 const client = new MongoClient(MONGO_URI);
 
-
-
 const app = express();
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '20mb' }));
 app.use(cors());
-
-// --- Auth Setup ---
-
 
 // Collections
 let membersCollection;
 let paymentsCollection;
 let expensesCollection;
+let metaCollection;
 
-
-// --- Database Connection ---
+// --- Connect to Database ---
 async function connectDb() {
     try {
         await client.connect();
-        db = client.db('gpfr_db'); // You can name your database here
-        
+        const db = client.db('gpfr_db');
+
         membersCollection = db.collection('members');
         paymentsCollection = db.collection('payments');
         expensesCollection = db.collection('expenses');
-        
-        
-        console.log('Successfully connected to MongoDB Atlas');
+        metaCollection = db.collection('meta');
+
+        console.log('✅ Connected to MongoDB Atlas');
     } catch (err) {
-        console.error('Failed to connect to MongoDB', err);
+        console.error('❌ MongoDB connection failed:', err);
         process.exit(1);
     }
 }
 
-
-
-// --- API Endpoints ---
-
-// Login
-
-
-// Get all data
+// --- GET DATA ---
 app.get('/api/data', async (req, res) => {
     try {
-        const members = await membersCollection.find({}).sort({ id: 1 }).toArray();
-        const payments = await paymentsCollection.find({}).sort({ id: 1 }).toArray();
-        const expenses = await expensesCollection.find({}).sort({ _id: 1 }).toArray();
-        
-        // Map _id to id for expenses for frontend compatibility
-        const mappedExpenses = expenses.map(e => ({ ...e, id: e._id.toString() }));
+        const members = await membersCollection.find({}).toArray();
+        const payments = await paymentsCollection.find({}).toArray();
+        const expenses = await expensesCollection.find({}).toArray();
 
-        res.json({ members, payments, expenses: mappedExpenses });
+        const meta = await metaCollection.findOne({ key: 'ids' }) || {
+            nextMemberId: 1,
+            nextPaymentId: 1
+        };
+
+        res.json({
+            members,
+            payments,
+            expenses,
+            nextMemberId: meta.nextMemberId,
+            nextPaymentId: meta.nextPaymentId
+        });
+
     } catch (err) {
         console.error('GET /api/data error:', err);
-        res.status(500).json({ message: 'Failed to read data' });
+        res.status(500).json({ message: 'Failed to load data' });
     }
 });
 
-// Save all data
+// --- SAVE DATA ---
 app.post('/api/data', async (req, res) => {
-    const payload = req.body || {};
-    const { members = [], payments = [], expenses = [] } = payload;
+    const { members = [], payments = [], expenses = [], nextMemberId = 1, nextPaymentId = 1 } = req.body || {};
 
     try {
-        // Use bulk writes for efficiency
-        const memberOps = [
-            { deleteMany: { filter: {} } },
-            ...members.map(m => ({ insertOne: { document: m } }))
-        ];
-        const paymentOps = [
-            { deleteMany: { filter: {} } },
-            ...payments.map(p => ({ insertOne: { document: p } }))
-        ];
-        const expenseOps = [
-            { deleteMany: { filter: {} } },
-            ...expenses.map(e => ({ insertOne: { document: e } }))
-        ];
+        await membersCollection.deleteMany({});
+        await paymentsCollection.deleteMany({});
+        await expensesCollection.deleteMany({});
 
-        if (memberOps.length > 1) await membersCollection.bulkWrite(memberOps, { ordered: false });
-        else await membersCollection.deleteMany({});
+        if (members.length) await membersCollection.insertMany(members);
+        if (payments.length) await paymentsCollection.insertMany(payments);
+        if (expenses.length) await expensesCollection.insertMany(expenses);
 
-        if (paymentOps.length > 1) await paymentsCollection.bulkWrite(paymentOps, { ordered: false });
-        else await paymentsCollection.deleteMany({});
-        
-        if (expenseOps.length > 1) await expensesCollection.bulkWrite(expenseOps, { ordered: false });
-        else await expensesCollection.deleteMany({});
+        await metaCollection.updateOne(
+            { key: 'ids' },
+            { $set: { nextMemberId, nextPaymentId } },
+            { upsert: true }
+        );
 
-        res.json({ message: 'Data saved successfully' });
+        res.json({ message: '✅ Data saved successfully' });
+
     } catch (err) {
         console.error('POST /api/data error:', err);
         res.status(500).json({ message: 'Failed to save data' });
     }
 });
 
-// Export data
+// --- EXPORT JSON ---
 app.get('/api/export', async (req, res) => {
     try {
         const members = await membersCollection.find({}).toArray();
         const payments = await paymentsCollection.find({}).toArray();
         const expenses = await expensesCollection.find({}).toArray();
-        
-        const data = { members, payments, expenses };
+
         const filename = `gpfr-export-${Date.now()}.json`;
-        
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-        res.send(JSON.stringify(data, null, 2));
+        res.send(JSON.stringify({ members, payments, expenses }, null, 2));
+
     } catch (err) {
         console.error('GET /api/export error:', err);
         res.status(500).json({ message: 'Failed to export data' });
     }
 });
 
-
-// --- Serve Frontend ---
+// --- Serve Frontend (index.html in same folder) ---
 app.use(express.static(path.join(__dirname)));
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-
-// --- Initialize and Start Server ---
+// --- Start Server ---
 async function start() {
     await connectDb();
-    
-    const port = parseInt(process.env.PORT || '5000', 10);
-    app.listen(port, () => {
-        console.log(`
-Server ready at: http://localhost:${port}
-`);
-    });
+    const port = process.env.PORT || 5000;
+    app.listen(port, () => console.log(`✅ Server running on port ${port}`));
 }
 
 start();

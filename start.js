@@ -1,4 +1,5 @@
 const { spawn } = require('child_process');
+require('dotenv').config();
 const net = require('net');
 const path = require('path');
 const fs = require('fs');
