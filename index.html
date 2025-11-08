@@ -70,6 +70,12 @@
         padding-left: 8px;
       }
     }
+    .member-card { background: var(--color-surface); border-radius: 12px; padding: 16px; box-shadow: var(--shadow); border: 1px solid var(--color-border); display: flex; flex-direction: column; gap: 16px; transition: transform .2s, box-shadow .2s; }
+    .member-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .member-card-header { display: flex; align-items: center; gap: 12px; }
+    .member-card-name { font-weight: 600; font-size: 16px; flex-grow: 1; }
+    .month-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+    .month-dot { width: 100%; aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: var(--color-text); }
   </style>
 </head>
 <body>
@@ -93,7 +99,6 @@
         <div class="stat-box error"><h3>Total Expenses</h3><div class="value" id="totalExpenses">₹0</div></div>
         <div class="stat-box warning"><h3>Net Balance</h3><div class="value" id="netBalance">₹0</div></div>
       </div>
-      <div class="card"><h2>⏱️ Recent Activity</h2><div id="recentActivity"><p style="color:var(--color-text-light);text-align:center;padding:20px;">Recent payments and expenses will appear here</p></div></div>
     </div>
 
     <!-- Members Tab -->
@@ -110,12 +115,7 @@
           <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);">🔍</span>
           <input type="text" id="memberSearch" placeholder="Search members..." onkeyup="loadMembers()" style="padding-left:40px;" />
         </div>
-        <div class="overflow-x">
-          <table id="membersOverviewTable">
-            <thead><tr id="membersOverviewHeader"></tr></thead>
-            <tbody id="membersOverviewBody"></tbody>
-          </table>
-        </div>
+        <div id="membersGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;"></div>
       </div>
     </div>
 
@@ -126,6 +126,7 @@
         <form id="paymentForm">
           <div class="form-grid">
             <div class="form-group"><label>Member</label><select id="paymentMember" required><option value="">Select Member</option></select></div>
+            <div class="form-group"><label>Payment Date</label><input type="date" id="paymentDate" required /></div>
             <div class="form-group"><label>Month</label><input type="month" id="paymentMonth" required /></div>
             <div class="form-group"><label>Amount (₹)</label><input type="number" id="paymentAmount" required /></div>
             <div class="form-group"><label>Payment Method</label><select id="paymentMethod"><option>Cash</option><option>Bank Transfer</option><option>UPI</option><option>Cheque</option></select></div>
@@ -246,6 +247,9 @@
           </div>
           <div class="stat-box error" style="flex:1; padding:16px;">
             <h3>Total Due</h3><div class="value" id="memberTotalDue" style="font-size:24px;">₹0</div>
+          </div>
+          <div id="memberCreditBalanceContainer" class="stat-box success" style="flex:1; padding:16px; display:none;">
+            <h3>Credit Balance</h3><div class="value" id="memberCreditBalance" style="font-size:24px;">₹0</div>
           </div>
         </div>
         <h3 style="margin-bottom:12px; font-size:16px;">Unpaid Months</h3>
@@ -393,6 +397,12 @@
       });
     }
 
+    function getLocalDateString() {
+      const today = new Date();
+      // This creates a new Date object shifted by the timezone offset, ensuring the YYYY-MM-DD string is for the local date.
+      return new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+    }
+
     // ================== MEMBERS ==================
     function updatePaymentMemberDropdown(){
       const sel=document.getElementById('paymentMember'); if(!sel) return;
@@ -400,49 +410,59 @@
     }
 
     function loadMembers(){
-      const tbody = document.getElementById('membersOverviewBody');
-      const thead = document.getElementById('membersOverviewHeader');
+      const grid = document.getElementById('membersGrid');
       const search = (document.getElementById('memberSearch')?.value||'').toLowerCase();
       const filtered = members.filter(m => m.name.toLowerCase().includes(search) || m.flat.toLowerCase().includes(search));
 
       // FY April-March
-      const now = new Date(); const fyStart = 3; const months=[]; for(let i=0;i<12;i++){ months.push(new Date(now.getFullYear(), fyStart+i, 1)); }
-      const isMobile = window.innerWidth < 768;
-      const monthHeaders = months.map(d => {
-        const monthName = d.toLocaleDateString('en-IN', { month: 'short' });
-        return `<th>${isMobile ? monthName.charAt(0) : monthName}</th>`;
-      }).join('');
-      thead.innerHTML = `<th>Name</th><th>Paid</th><th>Due</th>` + monthHeaders + `<th>Actions</th>`;
+      const today = new Date();
+      const earliestJoinYear = members.length > 0 ? Math.min(...members.map(m => new Date(m.join).getFullYear())) : today.getFullYear();
+      const currentSystemYear = today.getFullYear();
+      const baseYear = Math.max(earliestJoinYear, currentSystemYear);
+      const displayYear = today.getMonth() >= 3 ? baseYear : baseYear - 1;
+      const fyStart = 3; const months=[]; for(let i=0;i<12;i++){ months.push(new Date(displayYear, fyStart+i, 1)); }
 
-      tbody.innerHTML = filtered.map(m=>{
+      if (filtered.length === 0) {
+        grid.innerHTML = `<p style="color:var(--color-text-light); text-align:center; padding: 20px; grid-column: 1 / -1;">No members found.</p>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(m=>{
         const pays = payments.filter(p=>p.memberId===m.id);
         let paidCount=0, totalPaidAmt=0, totalExpectedAmt=0; let monthCells='';
         months.forEach(d=>{
           const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-          totalExpectedAmt += getFeeForMonth(m, key);
+          const feeForMonth = getFeeForMonth(m, key);
+          totalExpectedAmt += feeForMonth;
           const paidForMonth = pays.filter(p=>p.month===key);
-          if(paidForMonth.length > 0) { paidCount++; totalPaidAmt += paidForMonth.reduce((sum, p) => sum + p.amount, 0); }
-          monthCells += `<td>${paidForMonth.length > 0 ?'✓':'✗'}</td>`;
+          const totalPaidForMonth = paidForMonth.reduce((sum, p) => sum + p.amount, 0);
+          if(totalPaidForMonth >= feeForMonth) { paidCount++; }
+          totalPaidAmt += totalPaidForMonth;
+
+          let dotColor = 'color-mix(in srgb, var(--color-error) 20%, transparent)'; // Unpaid
+          if (totalPaidForMonth >= feeForMonth) dotColor = 'color-mix(in srgb, var(--color-success) 25%, transparent)'; // Paid
+          else if (totalPaidForMonth > 0) dotColor = 'color-mix(in srgb, var(--color-warning) 25%, transparent)'; // Partial
+          
+          const monthName = d.toLocaleDateString('en-IN', { month: 'short' });
+          monthCells += `<div class="month-dot" style="background-color: ${dotColor};" title="${formatMonth(key)}">${monthName}</div>`;
         });
         const balance = totalExpectedAmt - totalPaidAmt;
-        return `<tr>
-          <td>
-            <div style="display:flex; align-items:center;">
-              <img src="${m.photo || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 1 1\'%3E%3C/svg%3E'}" class="avatar" alt="${m.name}" />
-              <span>${m.flat} - ${m.name}</span>
+        return `<div class="member-card">
+          <div class="member-card-header">
+            <img src="${m.photo || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 1 1\'%3E%3C/svg%3E'}" class="avatar" alt="${m.name}" />
+            <div class="member-card-name">${m.flat} - ${m.name}</div>
+            <div style="display:flex; gap:4px;">
+              <button class="btn btn-secondary btn-sm" onclick="editMember(${m.id})" title="Edit">✏️</button>
+              <button class="btn btn-secondary btn-sm" onclick="showMemberDetails(${m.id})" title="Details">👁️</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteMember(${m.id})" title="Delete">🗑️</button>
             </div>
-          </td>
-          <td>${paidCount}/12</td>
-          <td style="color:${balance>0?'var(--color-error)':'var(--color-success)'}">₹${balance.toLocaleString()}</td>
-          ${monthCells}
-          <td>
-            <div style="display:flex; gap:8px;">
-              <button class="btn btn-secondary btn-sm" onclick="editMember(${m.id})">✏️</button>
-              <button class="btn btn-secondary btn-sm" onclick="showMemberDetails(${m.id})">👁️</button>
-              <button class="btn btn-danger btn-sm" onclick="deleteMember(${m.id})">🗑️</button>
-            </div>
-          </td>
-        </tr>`;
+          </div>
+          <div class="month-grid">${monthCells}</div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:500; border-top: 1px solid var(--color-border); padding-top: 12px; margin-top: 4px;">
+            <span>Months Paid: <strong style="color:var(--color-success);">${paidCount}/12</strong></span>
+            <span>Balance Due: <strong style="color:${balance > 0 ? 'var(--color-error)' : 'var(--color-success)'};">₹${balance.toLocaleString()}</strong></span>
+          </div>
+        </div>`;
       }).join('');
 
       updatePaymentMemberDropdown();
@@ -535,7 +555,25 @@
       const m=members.find(x=>x.id===id); if(!m) return;
       document.getElementById('memberDetailsName').textContent=`${m.name} (${m.flat})`;
       document.getElementById('memberDetailsPhoto').src = m.photo || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 1 1\'%3E%3C/svg%3E';
-      const memberPays=payments.filter(p=>p.memberId===id); const totalPaid=memberPays.reduce((s,p)=>s+p.amount,0); const joinDate=new Date(m.join); const today=new Date(); let expected=0; const cur=new Date(joinDate); while(cur<=today){ const key=`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}`; expected+=getFeeForMonth(m, key); cur.setMonth(cur.getMonth()+1);} const totalDue=expected-totalPaid; document.getElementById('memberTotalPaid').textContent='₹'+totalPaid.toLocaleString(); document.getElementById('memberTotalDue').textContent='₹'+totalDue.toLocaleString(); const list=document.getElementById('memberUnpaidMonths'); list.innerHTML=''; const currentMonth=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`; const unpaid=getUnpaidMonths(id,currentMonth); if(unpaid.length){ unpaid.forEach(mon=>{ const li=document.createElement('li'); li.style.display='flex'; li.style.justifyContent='space-between'; li.style.alignItems='center'; li.style.marginBottom='8px'; li.innerHTML=`<span style=\"color: var(--color-error);\">${mon}</span><button class=\"btn btn-primary btn-sm\" onclick=\"markMonthAsPaid(${id}, '${mon}')\">Mark as Paid</button>`; list.appendChild(li); }); } else { const li=document.createElement('li'); li.textContent='No unpaid months.'; li.style.color='var(--color-success)'; list.appendChild(li);}
+      const memberPays=payments.filter(p=>p.memberId===id);
+      const totalPaid=memberPays.reduce((s,p)=>s+p.amount,0);
+      const joinDate=new Date(m.join);
+      
+      // Calculate expected amount for the full financial year
+      const today = new Date();
+      const earliestJoinYear = members.length > 0 ? Math.min(...members.map(m => new Date(m.join).getFullYear())) : today.getFullYear();
+      const currentSystemYear = today.getFullYear();
+      const baseYear = Math.max(earliestJoinYear, currentSystemYear);
+      const displayYear = today.getMonth() >= 3 ? baseYear : baseYear - 1;
+      let expected=0;
+      const cur=new Date(joinDate);
+      while(cur.getFullYear() < displayYear + 1 || (cur.getFullYear() === displayYear + 1 && cur.getMonth() < 3)) { const key=`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}`; if (cur >= joinDate) { expected+=getFeeForMonth(m, key); } cur.setMonth(cur.getMonth()+1); }
+      const balance=expected-totalPaid;
+      document.getElementById('memberTotalPaid').textContent='₹'+totalPaid.toLocaleString();
+      document.getElementById('memberTotalDue').textContent='₹'+Math.max(0, balance).toLocaleString();
+      const creditContainer = document.getElementById('memberCreditBalanceContainer');
+      if (balance < 0) { document.getElementById('memberCreditBalance').textContent='₹'+Math.abs(balance).toLocaleString(); creditContainer.style.display='block'; } else { creditContainer.style.display='none'; }
+      const list=document.getElementById('memberUnpaidMonths'); list.innerHTML=''; const endOfMonth = `${displayYear + 1}-03`; const unpaid=getUnpaidMonths(id,endOfMonth); if(unpaid.length){ unpaid.forEach(mon=>{ const li=document.createElement('li'); li.style.display='flex'; li.style.justifyContent='space-between'; li.style.alignItems='center'; li.style.marginBottom='8px'; li.innerHTML=`<span style=\"color: var(--color-error);\">${mon}</span><button class=\"btn btn-primary btn-sm\" onclick=\"markMonthAsPaid(${id}, '${mon}')\">Mark as Paid</button>`; list.appendChild(li); }); } else { const li=document.createElement('li'); li.textContent='No unpaid months.'; li.style.color='var(--color-success)'; list.appendChild(li);}
       document.getElementById('memberDetailsModal').style.display='block';
     }
     async function markMonthAsPaid(memberId, monthFormatted){
@@ -545,31 +583,25 @@
         customAlert('Error', 'Incorrect PIN. Payment was not recorded.');
         return;
       }
-      const m=members.find(x=>x.id===memberId); if(!m) return; const [monName,year]=monthFormatted.split(' '); const monthIndex=new Date(Date.parse(monName+" 1, 2000")).getMonth()+1; const month=`${year}-${String(monthIndex).padStart(2,'0')}`; const feeForMonth = getFeeForMonth(m, month); const payment={ id: nextPaymentId++, memberId, month, amount:feeForMonth, method:'Cash', date:new Date().toISOString().split('T')[0], notes:'Marked as paid' }; payments.push(payment); await saveDataToServer(); customAlert('Success', `💰 ${m.name} - ${monthFormatted} marked as paid!`); loadPayments(); loadMembers(); updateFinancialSummary(); showMemberDetails(memberId);
-    }
-
-    // ================== OVERVIEW ==================
-    function updateRecentActivity() {
-      const container = document.getElementById('recentActivity');
-      if (!container) return;
-      const paymentActivities = payments.map(p => { const m = members.find(x => x.id === p.memberId); return { type: 'payment', date: new Date(p.date), amount: p.amount, description: `Payment from <strong>${m ? m.name : 'Unknown'}</strong> for ${formatMonth(p.month)}` }; });
-      const expenseActivities = expenses.map(e => ({ type: 'expense', date: new Date(e.date), amount: e.amount, description: `Expense for <strong>${e.category}</strong>: ${e.description}` }));
-      const allActivities = [...paymentActivities, ...expenseActivities].sort((a, b) => b.date - a.date).slice(0, 5);
-
-      if (allActivities.length === 0) {
-        container.innerHTML = '<p style="color:var(--color-text-light);text-align:center;padding:20px;">No recent activity to display.</p>';
-        return;
-      }
-
-      container.innerHTML = allActivities.map(act => {
-        const isPayment = act.type === 'payment';
-        const amountColor = isPayment ? 'var(--color-success)' : 'var(--color-error)';
-        const amountSign = isPayment ? '' : '-';
-        return `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--color-border);">
-            <div><p style="margin-bottom:2px;">${act.description}</p><small style="color:var(--color-text-light);">${act.date.toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'})}</small></div>
-            <div style="font-weight:600; color:${amountColor}; white-space:nowrap; margin-left:16px;">${amountSign} ₹${act.amount.toLocaleString()}</div>
-          </div>`;
-      }).join('');
+      const m=members.find(x=>x.id===memberId); if(!m) return;
+      const [monName,year]=monthFormatted.split(' ');
+      const monthIndex=new Date(Date.parse(monName+" 1, 2000")).getMonth()+1;
+      const month=`${year}-${String(monthIndex).padStart(2,'0')}`;
+      const feeForMonth = getFeeForMonth(m, month);
+      const alreadyPaid = payments.filter(p=>p.memberId===memberId && p.month===month).reduce((sum,p)=>sum+p.amount,0);
+      const amountToPay = feeForMonth - alreadyPaid;
+      if(amountToPay <= 0) { customAlert('Info', 'This month is already fully paid.'); return; }
+      // Timezone-safe way to get YYYY-MM-DD
+      const localDateStr = getLocalDateString();
+      const payment={ id: nextPaymentId++, memberId, month, amount:amountToPay, method:'Cash', date: localDateStr, notes:'Marked as paid (balance)' };
+      payments.push(payment);
+      await saveDataToServer();
+      customAlert('Success', `💰 ${m.name} - ${monthFormatted} marked as paid!`);
+      // Refresh the popup first, then update the main page components
+      showMemberDetails(memberId);
+      loadPayments();
+      loadMembers();
+      updateFinancialSummary();
     }
 
     // ================== TOTALS ==================
@@ -577,22 +609,23 @@
 
     // ================== INIT & TESTS ==================
     document.addEventListener('DOMContentLoaded', async () => {
-      const today=new Date(); const ym=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`; const todayStr=today.toISOString().split('T')[0]; const from=`${today.getFullYear()}-04`;
-      const setVal=(id,val)=>{const el=document.getElementById(id); if(el) el.value=val;}; setVal('paymentMonth',ym); setVal('expenseDate',todayStr); setVal('newJoinDate',todayStr); setVal('reportFrom',from); setVal('reportTo',ym); setVal('reportMonth',ym);
+      const today=new Date(); const ym=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`; const localTodayStr = getLocalDateString(); const from=`${today.getFullYear()}-04`;
+      const setVal=(id,val)=>{const el=document.getElementById(id); if(el) el.value=val;}; setVal('paymentDate',localTodayStr); setVal('paymentMonth',ym); setVal('expenseDate',localTodayStr); setVal('newJoinDate',localTodayStr); setVal('reportFrom',from); setVal('reportTo',ym); setVal('reportMonth',ym);
 
       await loadDataFromServer();
       document.getElementById('totalMembers').textContent = members.length;
-      loadMembers(); loadPayments(); loadExpenses(); updateMonthReport(); updateFinancialSummary(); updateRecentActivity();
+      loadMembers(); loadPayments(); loadExpenses(); updateMonthReport(); updateFinancialSummary();
 
       // Forms
       document.getElementById('paymentForm')?.addEventListener('submit', async function(e){
         e.preventDefault();
         const pin = await customPrompt('PIN Required', 'Enter PIN to record payment.');
         if (pin !== '2024') { customAlert('Error', 'Incorrect PIN.'); return; }
-        const payment={ id: nextPaymentId++, memberId: parseInt(document.getElementById('paymentMember').value), month: document.getElementById('paymentMonth').value, amount: parseFloat(document.getElementById('paymentAmount').value), method: document.getElementById('paymentMethod').value, date: todayStr, notes: document.getElementById('paymentNotes').value };
+        const payment={ id: nextPaymentId++, memberId: parseInt(document.getElementById('paymentMember').value), month: document.getElementById('paymentMonth').value, amount: parseFloat(document.getElementById('paymentAmount').value), method: document.getElementById('paymentMethod').value, date: document.getElementById('paymentDate').value, notes: document.getElementById('paymentNotes').value };
         payments.push(payment);
         await saveDataToServer();
-        loadPayments(); updateFinancialSummary(); updateRecentActivity(); this.reset(); customAlert('Success', '💰 Payment recorded successfully!');
+        loadPayments(); updateFinancialSummary(); this.reset(); customAlert('Success', '💰 Payment recorded successfully!');
+        document.getElementById('paymentDate').value = getLocalDateString();
       });
 
       document.getElementById('expenseForm')?.addEventListener('submit', async function(e){
@@ -600,7 +633,7 @@
         const pin = await customPrompt('PIN Required', 'Enter PIN to add expense.');
         if (pin !== '2024') { customAlert('Error', 'Incorrect PIN.'); return; }
         const file=document.getElementById('expenseReceipt').files[0];
-        const done= async (b64)=>{ const expense={ date: document.getElementById('expenseDate').value, category: document.getElementById('expenseCategory').value, description: document.getElementById('expenseDescription').value, vendor: document.getElementById('expenseVendor').value, amount: parseFloat(document.getElementById('expenseAmount').value), receipt: b64||null }; expenses.push(expense); await saveDataToServer(); loadExpenses(); updateRecentActivity(); this.reset(); customAlert('Success', '💸 Expense added successfully!'); }; if(file){ const r=new FileReader(); r.onload=async e=>{ await done(e.target.result); }; r.readAsDataURL(file);} else await done(null);
+        const done= async (b64)=>{ const expense={ date: document.getElementById('expenseDate').value, category: document.getElementById('expenseCategory').value, description: document.getElementById('expenseDescription').value, vendor: document.getElementById('expenseVendor').value, amount: parseFloat(document.getElementById('expenseAmount').value), receipt: b64||null }; expenses.push(expense); await saveDataToServer(); loadExpenses(); this.reset(); customAlert('Success', '💸 Expense added successfully!'); document.getElementById('expenseDate').value = getLocalDateString(); }; if(file){ const r=new FileReader(); r.onload=async e=>{ await done(e.target.result); }; r.readAsDataURL(file);} else await done(null);
       });
 
       document.getElementById('addMemberForm')?.addEventListener('submit', async function(e){
