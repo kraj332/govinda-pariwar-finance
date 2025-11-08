@@ -6,52 +6,59 @@
   <title>GOVINDA PARIWAR - Colony Finance Manager</title>
   <meta name="description" content="Colony Finance Management System for Govinda Pariwar" />
   <meta name="theme-color" content="#21808d" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiR292aW5kYSBQYXJpd2FyIEZpbmFuY2UiLCJzaG9ydF9uYW1lIjoiR1AgRmluYW5jZSIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZmNmY2Y5IiwidGhlbWVfY29sb3IiOiIjMjE4MDhkIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEwMCclM0UlM0NyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyBmaWxsPSclMjMyMTgwOGQnLyUzRSUzQ3RleHQgeD0nNTAnIHk9JzUwJyBmb250LXNpemU9JzUwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBkeT0nLjNlbScgZmlsbD0nd2hpdGUnJTNFRyUzQy90ZXh0JTNFJTNDL3N2ZyUzRSIsInNpemVzIjoiNTEyeDUxMiIsInR5cGUiOiJpbWFnZS9zdmcreG1sIn1dfQ==" />
   <style>
-    :root { --color-primary:#21808d; --color-primary-hover:#1d7480; --color-bg:#fcfcf9; --color-surface:#ffffff; --color-text:#13343b; --color-text-light:#626c71; --color-border:#e8e6e1; --color-success:#21808d; --color-error:#c0152f; --color-warning:#e68161; --shadow:0 2px 8px rgba(0,0,0,0.08); }
-    @media (prefers-color-scheme: dark){ :root{ --color-bg:#1f2121; --color-surface:#262828; --color-text:#f5f5f5; --color-text-light:#a7a9a9; --color-border:#3a3c3c; --color-primary:#32b8c6; } }
+    :root { --color-primary:#0d9488; --color-primary-hover:#0f766e; --color-bg:#f1f5f9; --color-surface:#ffffff; --color-text:#1e293b; --color-text-light:#64748b; --color-border:#e2e8f0; --color-success:#10b981; --color-error:#ef4444; --color-warning:#f97316; --shadow:0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1); --shadow-md:0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1); }
+    @media (prefers-color-scheme: dark){ :root{ --color-primary:#2dd4bf; --color-primary-hover:#5eead4; --color-bg:#0f172a; --color-surface:#1e293b; --color-text:#e2e8f0; --color-text-light:#94a3b8; --color-border:#334155; --color-success:#34d399; --color-error:#f87171; --color-warning:#fb923c; } }
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--color-bg);color:var(--color-text);line-height:1.6;font-size:14px}
-    .container{max-width:1200px;margin:0 auto;padding:16px;position:relative}
-    .header{background:linear-gradient(135deg,var(--color-primary) 0%,#1d7480 100%);color:#fff;padding:24px;border-radius:12px;box-shadow:var(--shadow);margin-bottom:16px;border:1px solid var(--color-border);text-align:center}
-    .header h1{font-size:28px;margin-bottom:8px;font-weight:700}
-    .header p{font-size:14px;opacity:.9}
-    .tabs{display:flex;gap:4px;margin:16px 0 24px;border-radius:12px;background:var(--color-surface);padding:4px;box-shadow:var(--shadow);border:1px solid var(--color-border);overflow-x:auto}
-    .tab{flex:1;padding:12px 16px;background:none;border:none;color:var(--color-text-light);cursor:pointer;font-size:14px;font-weight:600;border-radius:8px;transition:background .2s,color .2s;white-space:nowrap;min-width:120px}
-    .tab:hover{color:var(--color-text);background:rgba(33,128,141,.08)}
-    .tab.active{background:var(--color-primary);color:#fff}
-    .card{background:var(--color-surface);border-radius:12px;padding:24px;box-shadow:var(--shadow);margin-bottom:24px;border:1px solid var(--color-border)}
-    .card h2{font-size:20px;margin-bottom:20px;display:flex;align-items:center;gap:8px}
-    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:24px}
-    .stat-box{background:var(--color-surface);padding:20px;border-radius:16px;border:2px solid var(--color-border);box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s}
-    .stat-box:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.12)}
-    .stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--color-primary)}
+    body{font-family:'Inter', -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--color-bg);color:var(--color-text);line-height:1.6;font-size:14px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+    .container{max-width:1400px;margin:0 auto;padding:16px;position:relative}
+    .header{background:var(--color-surface);color:var(--color-text);padding:20px;border-radius:12px;box-shadow:var(--shadow-md);margin-bottom:20px;border:1px solid var(--color-border);text-align:center}
+    .header h1{font-size:32px;margin-bottom:4px;font-weight:700;color:var(--color-primary)}
+    .header p{font-size:16px;color:var(--color-text-light)}
+    .tabs{display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid var(--color-border);overflow-x:auto}
+    .tab{padding:10px 16px;background:none;border:none;color:var(--color-text-light);cursor:pointer;font-size:15px;font-weight:600;border-radius:0;transition:all .2s;white-space:nowrap;border-bottom:3px solid transparent}
+    .tab:hover{color:var(--color-text)}
+    .tab.active{color:var(--color-primary);border-bottom-color:var(--color-primary)}
+    .card{background:var(--color-surface);border-radius:12px;padding:20px;box-shadow:var(--shadow-md);margin-bottom:20px;border:1px solid var(--color-border)}
+    .card h2{font-size:20px;margin-bottom:16px;display:flex;align-items:center;gap:8px;font-weight:600}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:20px}
+    .stat-box{background:var(--color-surface);padding:20px;border-radius:12px;border:1px solid var(--color-border);box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .25s,box-shadow .25s}
+    .stat-box:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+    .stat-box::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:var(--color-primary)}
     .stat-box.success::before{background:var(--color-success)}
     .stat-box.error::before{background:var(--color-error)}
     .stat-box.warning::before{background:var(--color-warning)}
     .stat-box h3{font-size:12px;color:var(--color-text-light);text-transform:uppercase;margin-bottom:12px;letter-spacing:1px;font-weight:600}
     .stat-box .value{font-size:32px;font-weight:700;line-height:1}
-    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-bottom:20px}
-    .form-group{margin-bottom:20px}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:16px}
+    .form-group{margin-bottom:16px}
     label{display:block;margin-bottom:8px;font-weight:600;font-size:13px;color:var(--color-text)}
-    input,select,textarea{width:100%;padding:12px 16px;border:2px solid var(--color-border);border-radius:8px;font-size:14px;background:var(--color-surface);color:var(--color-text)}
-    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(33,128,141,.1)}
-    .btn{padding:12px 16px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+    input,select,textarea{width:100%;padding:10px 14px;border:1px solid var(--color-border);border-radius:8px;font-size:14px;background:var(--color-bg);color:var(--color-text);transition:all .2s}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent)}
+    .btn{padding:10px 16px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:all .2s}
     .btn-primary{background:var(--color-primary);color:#fff}
     .btn-primary:hover{background:var(--color-primary-hover)}
-    .btn-secondary{background:var(--color-border);color:var(--color-text)}
+    .btn-secondary{background:var(--color-surface);color:var(--color-text);border:1px solid var(--color-border)}
+    .btn-secondary:hover{background-color:var(--color-bg)}
     .btn-danger{background:var(--color-error);color:#fff}
-    table{width:100%;border-collapse:collapse;font-size:13px;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-    th,td{padding:12px;text-align:left;border-bottom:1px solid var(--color-border)}
-    th{background:var(--color-primary);color:#fff;font-weight:600;font-size:12px;text-transform:uppercase}
-    .badge{display:inline-block;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600}
-    .badge-success{background:rgba(33,128,141,.15);color:var(--color-success);border:1px solid rgba(33,128,141,.3)}
-    .badge-pending{background:rgba(230,129,97,.15);color:var(--color-warning);border:1px solid rgba(230,129,97,.3)}
-    .badge-danger{background:rgba(192,21,47,.15);color:var(--color-error);border:1px solid rgba(192,21,47,.3)}
+    table{width:100%;border-collapse:collapse;font-size:14px;}
+    th,td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--color-border)}
+    th{background:var(--color-bg);color:var(--color-text-light);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+    tr:hover td{background:var(--color-bg)}
+    .badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;letter-spacing:.5px}
+    .badge-success{background:color-mix(in srgb, var(--color-success) 15%, transparent);color:var(--color-success)}
+    .badge-pending{background:color-mix(in srgb, var(--color-warning) 15%, transparent);color:var(--color-warning)}
+    .badge-danger{background:color-mix(in srgb, var(--color-error) 15%, transparent);color:var(--color-error)}
     .overflow-x{overflow-x:auto;border-radius:8px}
     .tab-content{display:none;opacity:0;transition:opacity .35s ease-in-out}
     .tab-content.active{display:block;opacity:1}
-    @media (max-width:768px){.tabs{gap:2px}.tab{min-width:100px;font-size:12px;padding:10px 12px}.stat-box .value{font-size:26px}}
+    @media (max-width:768px){.tabs{gap:0}.tab{font-size:13px;padding:8px 10px}.stat-box .value{font-size:28px}}
+    .modal-backdrop{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;padding:20px;align-items:center;justify-content:center}
+    .avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;margin-right:12px;vertical-align:middle;background:var(--color-border);border:2px solid var(--color-surface)}
   </style>
 </head>
 <body>
@@ -59,7 +66,7 @@
     <div class="header"><h1>GOVINDA PARIWAR</h1><p>Accounts - FY 2025 - 2026</p></div>
 
     <div class="tabs">
-      <button class="tab active" data-tab="overview" onclick="switchTab('overview')">📊 Overview</button>
+      <button class="tab active" data-tab="overview" onclick="switchTab('overview')">🏠 Overview</button>
       <button class="tab" data-tab="members" onclick="switchTab('members')">👥 Members</button>
       <button class="tab" data-tab="payments" onclick="switchTab('payments')">💰 Payments</button>
       <button class="tab" data-tab="monthly" onclick="switchTab('monthly')">📅 Monthly Report</button>
@@ -75,7 +82,7 @@
         <div class="stat-box error"><h3>Total Expenses</h3><div class="value" id="totalExpenses">₹0</div></div>
         <div class="stat-box warning"><h3>Net Balance</h3><div class="value" id="netBalance">₹0</div></div>
       </div>
-      <div class="card"><h2>📈 Recent Activity</h2><div id="recentActivity"><p style="color:var(--color-text-light);text-align:center;padding:20px;">Recent payments and expenses will appear here</p></div></div>
+      <div class="card"><h2>⏱️ Recent Activity</h2><div id="recentActivity"><p style="color:var(--color-text-light);text-align:center;padding:20px;">Recent payments and expenses will appear here</p></div></div>
     </div>
 
     <!-- Members Tab -->
@@ -117,7 +124,7 @@
         </form>
       </div>
       <div class="card">
-        <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;" class="mb-16"><h2>💳 Payment History</h2><button class="btn btn-secondary btn-sm" onclick="exportPayments()">📤 Export CSV</button></div>
+        <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;"><h2>💳 Payment History</h2><button class="btn btn-secondary btn-sm" onclick="exportPayments()">📤 Export CSV</button></div>
         <div class="overflow-x">
           <table>
             <thead><tr><th>Date</th><th>Member</th><th>Month</th><th>Amount</th><th>Method</th><th>Actions</th></tr></thead>
@@ -131,13 +138,13 @@
     <div id="monthly" class="tab-content">
       <div class="card">
         <div class="form-group"><label>📅 Select Month for Report</label><input type="month" id="reportMonth" onchange="updateMonthReport()" /></div>
-        <div class="stats mt-16">
+        <div class="stats" style="margin-top:16px;">
           <div class="stat-box"><h3>Expected Collection</h3><div class="value" id="monthExpected">₹0</div></div>
           <div class="stat-box success"><h3>Actual Collection</h3><div class="value" id="monthCollected">₹0</div></div>
           <div class="stat-box error"><h3>Month Expenses</h3><div class="value" id="monthExpenses">₹0</div></div>
           <div class="stat-box warning"><h3>Month Balance</h3><div class="value" id="monthBalance">₹0</div></div>
         </div>
-        <h2 class="mt-16 mb-16">📊 Member Payment Status</h2>
+        <h2 style="margin-top:16px;">📊 Member Payment Status</h2>
         <div class="overflow-x">
           <table>
             <thead><tr><th>Flat</th><th>Name</th><th>Monthly Fee</th><th>Amount Paid</th><th>Due Amount</th><th>Status</th><th>Unpaid Months</th></tr></thead>
@@ -164,7 +171,7 @@
         </form>
       </div>
       <div class="card">
-        <div style="display:flex; gap:12px; align-items:center; justify-content:space-between;" class="mb-16">
+        <div style="display:flex; gap:12px; align-items:center; justify-content:space-between;">
           <h2>📋 All Expenses</h2>
           <button class="btn btn-secondary btn-sm" onclick="exportExpenses()">📤 Export CSV</button>
         </div>
@@ -200,7 +207,7 @@
     <!-- Add Member Modal -->
     <div id="addMemberModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; padding:20px;">
       <div style="background:var(--color-surface); max-width:500px; margin:50px auto; padding:24px; border-radius:12px; max-height:90vh; overflow-y:auto;">
-        <h2>➕ Add New Member</h2>
+        <h2 id="addMemberTitle">➕ Add New Member</h2>
         <form id="addMemberForm">
           <div class="form-group"><label>Flat Number</label><input type="text" id="newFlat" required /></div>
           <div class="form-group"><label>Name</label><input type="text" id="newName" required /></div>
@@ -218,7 +225,10 @@
     <!-- Member Details Modal -->
     <div id="memberDetailsModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; padding:20px;">
       <div style="background:var(--color-surface); max-width:500px; margin:50px auto; padding:24px; border-radius:12px; max-height:90vh; overflow-y:auto;">
-        <h2 id="memberDetailsName" style="margin-bottom: 16px;"></h2>
+        <div style="display:flex; align-items:center; margin-bottom: 16px;">
+          <img id="memberDetailsPhoto" src="" alt="Member Photo" style="width:64px; height:64px; border-radius:50%; object-fit:cover; margin-right:16px; background:var(--color-border);">
+          <h2 id="memberDetailsName"></h2>
+        </div>
         <div style="display:flex; justify-content:space-around; gap: 16px; margin-bottom: 24px;">
           <div class="stat-box success" style="flex:1; padding:16px;">
             <h3>Total Paid</h3><div class="value" id="memberTotalPaid" style="font-size:24px;">₹0</div>
@@ -230,6 +240,17 @@
         <h3 style="margin-bottom:12px; font-size:16px;">Unpaid Months</h3>
         <ul id="memberUnpaidMonths" style="list-style:none; padding:0; margin-top:0;"></ul>
         <button type="button" class="btn btn-secondary" onclick="hideMemberDetails()">Close</button>
+      </div>
+    </div>
+
+    <!-- Custom Alert/Confirm Modal -->
+    <div id="customModal" class="modal-backdrop">
+      <div style="background:var(--color-surface); max-width:400px; margin:0 auto; padding:24px; border-radius:12px; box-shadow:var(--shadow-md); text-align:center;">
+        <h2 id="customModalTitle" style="margin-bottom: 16px; font-size: 20px;"></h2>
+        <p id="customModalMessage" style="margin-bottom: 24px; color: var(--color-text-light); line-height:1.6;"></p>
+        <div id="customModalButtons" style="display:flex; gap:12px; justify-content:center;">
+          <!-- Buttons will be injected here -->
+        </div>
       </div>
     </div>
   </div>
@@ -264,10 +285,10 @@
         try{
           const cached = JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');
           members = cached.members || [];
-          payments = cached.payments || [];
-          expenses = cached.expenses || [];
-          nextMemberId = cached.nextMemberId || 1;
-          nextPaymentId = cached.nextPaymentId || 1;
+          payments = cached.payments || []; // Keep this line
+          expenses = cached.expenses || []; // Keep this line
+          nextMemberId = Number(cached.nextMemberId) || (members.length ? Math.max(...members.map(m=>m.id||0))+1 : 1);
+          nextPaymentId = Number(cached.nextPaymentId) || (payments.length ? Math.max(...payments.map(p=>p.id||0))+1 : 1);
         }catch(e){/* ignore */}
       }
     }
@@ -278,10 +299,10 @@
         const res = await fetch(API_DATA_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
         if(!res.ok) throw new Error('Save failed');
         localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-      }catch(err){
+      } catch(err) {
         console.error('Save failed, caching locally', err);
         try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }catch(e){}
-        alert('⚠️ Backend not reachable. Changes saved locally; will sync when online.');
+        customAlert('⚠️ Connection Error', 'Changes saved locally. They will sync automatically when the connection is restored.');
       }
     }
 
@@ -306,6 +327,61 @@
     function formatDate(s){ return new Date(s).toLocaleDateString('en-IN'); }
     function formatMonth(m){ const d=new Date(m+'-01'); return d.toLocaleDateString('en-IN',{month:'short',year:'numeric'}); }
 
+    function getFeeForMonth(member, monthString) {
+      const feeChangeDate = new Date('2025-09-01');
+      const monthDate = new Date(monthString + '-01');
+      // The fee was 500 before Sep 2025, and is member.fee (1000) from Sep 2025 onwards.
+      if (monthDate < feeChangeDate) return 500;
+      return member.fee;
+    }
+
+    function customAlert(title, message) {
+      document.getElementById('customModalTitle').textContent = title;
+      document.getElementById('customModalMessage').innerHTML = message;
+      const buttons = document.getElementById('customModalButtons');
+      buttons.innerHTML = `<button class="btn btn-primary" onclick="document.getElementById('customModal').style.display='none'">OK</button>`;
+      document.getElementById('customModal').style.display = 'flex';
+    }
+
+    function customConfirm(title, message) {
+      return new Promise((resolve) => {
+        document.getElementById('customModalTitle').textContent = title;
+        document.getElementById('customModalMessage').innerHTML = message;
+        const buttons = document.getElementById('customModalButtons');
+        const modal = document.getElementById('customModal');
+        const close = (value) => { modal.style.display = 'none'; resolve(value); };
+        buttons.innerHTML = `
+          <button class="btn btn-secondary" id="confirmCancel">Cancel</button>
+          <button class="btn btn-danger" id="confirmOK">Yes, Delete</button>`;
+        document.getElementById('confirmCancel').onclick = () => close(false);
+        document.getElementById('confirmOK').onclick = () => close(true);
+        modal.style.display = 'flex';
+      });
+    }
+
+    function customPrompt(title, message) {
+      return new Promise((resolve) => { //NOSONAR
+        document.getElementById('customModalTitle').textContent = title;
+        document.getElementById('customModalMessage').innerHTML = `
+          <p style="margin-bottom: 16px;">${message}</p>
+          <input type="password" id="promptInput" pattern="[0-9]*" inputmode="numeric" maxlength="4" style="width: 100%; padding: 10px; font-size: 18px; text-align: center; border: 2px solid var(--color-border); border-radius: 8px;" />
+        `;
+        const buttons = document.getElementById('customModalButtons');
+        const modal = document.getElementById('customModal');
+        
+        const close = (value) => { modal.style.display = 'none'; resolve(value); };
+
+        buttons.innerHTML = `
+          <button class="btn btn-secondary" id="promptCancel">Cancel</button>
+          <button class="btn btn-primary" id="promptOK">Submit</button>`;
+        
+        document.getElementById('promptCancel').onclick = () => close(null);
+        document.getElementById('promptOK').onclick = () => close(document.getElementById('promptInput').value);
+        modal.style.display = 'flex';
+        document.getElementById('promptInput').focus();
+      });
+    }
+
     // ================== MEMBERS ==================
     function updatePaymentMemberDropdown(){
       const sel=document.getElementById('paymentMember'); if(!sel) return;
@@ -324,11 +400,22 @@
 
       tbody.innerHTML = filtered.map(m=>{
         const pays = payments.filter(p=>p.memberId===m.id);
-        let paidCount=0, totalPaidAmt=0; let monthCells='';
-        months.forEach(d=>{ const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; const paid=pays.some(p=>p.month===key); if(paid){ paidCount++; totalPaidAmt+=m.fee; } monthCells += `<td>${paid?'✓':'✗'}</td>`; });
-        const balance = (12*m.fee) - totalPaidAmt;
+        let paidCount=0, totalPaidAmt=0, totalExpectedAmt=0; let monthCells='';
+        months.forEach(d=>{
+          const key=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+          totalExpectedAmt += getFeeForMonth(m, key);
+          const paidForMonth = pays.filter(p=>p.month===key);
+          if(paidForMonth.length > 0) { paidCount++; totalPaidAmt += paidForMonth.reduce((sum, p) => sum + p.amount, 0); }
+          monthCells += `<td>${paidForMonth.length > 0 ?'✓':'✗'}</td>`;
+        });
+        const balance = totalExpectedAmt - totalPaidAmt;
         return `<tr>
-          <td>${m.flat} - ${m.name}</td>
+          <td>
+            <div style="display:flex; align-items:center;">
+              <img src="${m.photo || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 1 1\'%3E%3C/svg%3E'}" class="avatar" alt="${m.name}" />
+              <span>${m.flat} - ${m.name}</span>
+            </div>
+          </td>
           <td>${paidCount}/12</td>
           <td style="color:${balance>0?'var(--color-error)':'var(--color-success)'}">₹${balance.toLocaleString()}</td>
           ${monthCells}
@@ -346,11 +433,34 @@
     }
 
     function showAddMember(){ document.getElementById('addMemberModal').style.display='block'; }
-    function hideAddMember(){ const modal=document.getElementById('addMemberModal'); modal.style.display='none'; modal.querySelector('h2').textContent='➕ Add New Member'; document.getElementById('addMemberForm').reset(); delete document.getElementById('addMemberForm').dataset.editId; }
+    function hideAddMember(){ const modal=document.getElementById('addMemberModal'); modal.style.display='none'; document.getElementById('addMemberTitle').textContent='➕ Add New Member'; document.getElementById('addMemberForm').reset(); delete document.getElementById('addMemberForm').dataset.editId; }
 
-    async function deleteMember(id){ const m=members.find(x=>x.id===id); if(!m) return; if(confirm(`Delete ${m.name}? This will also delete payments.`)){ members = members.filter(x=>x.id!==id); payments = payments.filter(p=>p.memberId!==id); await saveDataToServer(); loadMembers(); loadPayments(); updateFinancialSummary(); document.getElementById('totalMembers').textContent = members.length; alert('🗑️ Member deleted successfully!'); } }
+    async function deleteMember(id){
+      console.log("deleteMember called with id:", id, "of type", typeof id);
+      const m = members.find(x => x.id === Number(id));
+      if(!m) {
+        console.error("Could not find member with id:", id);
+        return;
+      }
+      const confirmed = await customConfirm('Delete Member?', `Are you sure you want to delete <strong>${m.name}</strong>? This action will also remove all associated payments and cannot be undone.`);
+      if (confirmed) {
+        const pin = await customPrompt('PIN Required', 'Enter the 4-digit PIN to confirm deletion.');
+        if (pin !== '2024') {
+          customAlert('Error', 'Incorrect PIN. Deletion cancelled.');
+          return;
+        }
+        members = members.filter(x => x.id !== Number(id));
+        payments = payments.filter(p => p.memberId !== Number(id));
+        await saveDataToServer();
+        loadMembers();
+        loadPayments();
+        updateFinancialSummary();
+        document.getElementById('totalMembers').textContent = members.length;
+        customAlert('Success', '🗑️ Member deleted successfully!');
+      }
+    }
 
-    function editMember(id){ const m=members.find(x=>x.id===id); if(!m) return; document.getElementById('newFlat').value=m.flat; document.getElementById('newName').value=m.name; document.getElementById('newFee').value=m.fee; document.getElementById('newJoinDate').value=m.join; document.getElementById('addMemberForm').dataset.editId=id; document.querySelector('#addMemberModal h2').textContent='✏️ Edit Member'; showAddMember(); }
+    function editMember(id){ const m=members.find(x=>x.id===id); if(!m) return; document.getElementById('newFlat').value=m.flat; document.getElementById('newName').value=m.name; document.getElementById('newFee').value=m.fee; document.getElementById('newJoinDate').value=m.join; document.getElementById('addMemberForm').dataset.editId=id; document.getElementById('addMemberTitle').textContent='✏️ Edit Member'; showAddMember(); }
 
     // ================== PAYMENTS ==================
     function loadPayments(){
@@ -359,34 +469,82 @@
       tbody.innerHTML = payments.slice().reverse().map(p=>{ const m=members.find(x=>x.id===p.memberId); return `<tr><td>${formatDate(p.date)}</td><td>${m?m.name:'Unknown'}</td><td>${formatMonth(p.month)}</td><td>₹${p.amount}</td><td>${p.method}</td><td><button class="btn btn-danger btn-sm" onclick="deletePayment(${p.id})">🗑️</button></td></tr>`; }).join('');
     }
 
-    async function deletePayment(id){ if(confirm('Delete this payment?')){ payments = payments.filter(p=>p.id!==id); await saveDataToServer(); loadPayments(); updateFinancialSummary(); alert('🗑️ Payment deleted!'); } }
+    async function deletePayment(id){
+      const confirmed = await customConfirm('Delete Payment?', 'Are you sure you want to delete this payment record?');
+      if (confirmed) {
+        payments = payments.filter(p=>p.id!==id); await saveDataToServer(); loadPayments(); updateFinancialSummary(); customAlert('Success', '🗑️ Payment deleted!');
+      }
+    }
 
     // ================== MONTHLY REPORT ==================
-    function getUnpaidMonths(memberId, upToMonth){ const m=members.find(x=>x.id===memberId); if(!m) return []; const joinDate=new Date(m.join); const endDate=new Date(upToMonth+'-01'); const unpaid=[]; const pays=payments.filter(p=>p.memberId===memberId); const cur=new Date(joinDate); while(cur<=endDate){ const key=`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}`; if(!pays.some(p=>p.month===key)) unpaid.push(formatMonth(key)); cur.setMonth(cur.getMonth()+1);} return unpaid; }
+    function getUnpaidMonths(memberId, upToMonth){ const m=members.find(x=>x.id===memberId); if(!m) return []; const joinDate=new Date(m.join); const endDate=new Date(upToMonth+'-01'); const unpaid=[]; const pays=payments.filter(p=>p.memberId===memberId); const cur=new Date(joinDate); while(cur<=endDate){ const key=`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}`; const paidForMonth=pays.filter(p=>p.month===key); const totalPaidForMonth = paidForMonth.reduce((sum, p) => sum + p.amount, 0); const feeForMonth = getFeeForMonth(m, key); if(totalPaidForMonth < feeForMonth) unpaid.push(formatMonth(key)); cur.setMonth(cur.getMonth()+1);} return unpaid; }
 
-    function updateMonthReport(){ const month=document.getElementById('reportMonth').value; if(!month) return; const monthPays=payments.filter(p=>p.month===month); const collected=monthPays.reduce((s,p)=>s+p.amount,0); const expected=members.reduce((s,m)=>s+m.fee,0); const monthExp=expenses.filter(e=>e.date.startsWith(month)).reduce((s,e)=>s+e.amount,0); document.getElementById('monthExpected').textContent='₹'+expected.toLocaleString(); document.getElementById('monthCollected').textContent='₹'+collected.toLocaleString(); document.getElementById('monthExpenses').textContent='₹'+monthExp.toLocaleString(); document.getElementById('monthBalance').textContent='₹'+(collected-monthExp).toLocaleString(); const tbody=document.getElementById('monthPaymentBody'); tbody.innerHTML = members.map(m=>{ const paid=monthPays.filter(p=>p.memberId===m.id); const totalPaid=paid.reduce((s,p)=>s+p.amount,0); const due=m.fee-totalPaid; const status= due<=0?'Paid':(totalPaid>0?'Partial':'Pending'); const unpaid=getUnpaidMonths(m.id, month); return `<tr><td>${m.flat}</td><td>${m.name}</td><td>₹${m.fee}</td><td>₹${totalPaid}</td><td style="color:${due>0?'var(--color-error)':'var(--color-success)'}">₹${due}</td><td><span class="badge ${status==='Paid'?'badge-success':(status==='Partial'?'badge-pending':'badge-danger')}">${status}</span></td><td style="font-size:11px; color: var(--color-error)">${unpaid.length?unpaid.join(', '):'-'}</td></tr>`; }).join(''); }
+    function updateMonthReport(){ const month=document.getElementById('reportMonth').value; if(!month) return; const monthPays=payments.filter(p=>p.month===month); const collected=monthPays.reduce((s,p)=>s+p.amount,0); const expected=members.reduce((s,m)=>s+getFeeForMonth(m, month),0); const monthExp=expenses.filter(e=>e.date.startsWith(month)).reduce((s,e)=>s+e.amount,0); document.getElementById('monthExpected').textContent='₹'+expected.toLocaleString(); document.getElementById('monthCollected').textContent='₹'+collected.toLocaleString(); document.getElementById('monthExpenses').textContent='₹'+monthExp.toLocaleString(); document.getElementById('monthBalance').textContent='₹'+(collected-monthExp).toLocaleString(); const tbody=document.getElementById('monthPaymentBody'); tbody.innerHTML = members.map(m=>{ const feeForMonth = getFeeForMonth(m, month); const paid=monthPays.filter(p=>p.memberId===m.id); const totalPaid=paid.reduce((s,p)=>s+p.amount,0); const due=feeForMonth-totalPaid; const status= due<=0?'Paid':(totalPaid>0?'Partial':'Pending'); const unpaid=getUnpaidMonths(m.id, month); return `<tr><td>${m.flat}</td><td>${m.name}</td><td>₹${feeForMonth}</td><td>₹${totalPaid}</td><td style="color:${due>0?'var(--color-error)':'var(--color-success)'}">₹${due}</td><td><span class="badge ${status==='Paid'?'badge-success':(status==='Partial'?'badge-pending':'badge-danger')}">${status}</span></td><td style="font-size:11px; color: var(--color-error)">${unpaid.length?unpaid.join(', '):'-'}</td></tr>`; }).join(''); }
 
     // ================== EXPENSES ==================
     function loadExpenses(){ const tbody=document.getElementById('expensesBody'); if(!expenses.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--color-text-light)">No expenses recorded yet</td></tr>'; } else { tbody.innerHTML = expenses.slice().reverse().map((e,idx)=>`<tr><td>${formatDate(e.date)}</td><td>${e.category}</td><td>${e.description}</td><td>${e.vendor}</td><td>₹${e.amount.toLocaleString()}</td><td>${e.receipt?`<a href="${e.receipt}" target="_blank">📎 View</a>`:'-'}</td><td><button class="btn btn-danger btn-sm" onclick="deleteExpense(${expenses.length-1-idx})">🗑️</button></td></tr>`).join(''); } updateFinancialSummary(); }
 
-    async function deleteExpense(index){ if(confirm('Delete this expense?')){ expenses.splice(index,1); await saveDataToServer(); loadExpenses(); alert('🗑️ Expense deleted!'); } }
+    async function deleteExpense(index){
+      const confirmed = await customConfirm('Delete Expense?', 'Are you sure you want to delete this expense record?');
+      if (confirmed) {
+        expenses.splice(index,1); await saveDataToServer(); loadExpenses(); customAlert('Success', '🗑️ Expense deleted!');
+      }
+    }
 
     // ================== REPORTS / EXPORT ==================
     function downloadCSV(content, filename){ const blob=new Blob([content],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }
     function exportMembers(){ const csv='Flat,Name,Monthly Fee,Join Date,Status\n'+members.map(m=>`${m.flat},"${m.name}",${m.fee},${m.join},Active`).join('\n'); downloadCSV(csv, 'members.csv'); }
     function exportPayments(){ const csv='Date,Member,Month,Amount,Method,Notes\n'+payments.map(p=>{ const m=members.find(x=>x.id===p.memberId); return `${p.date},"${m?m.name:'Unknown'}",${p.month},${p.amount},${p.method},"${p.notes||''}"`; }).join('\n'); downloadCSV(csv, 'payments.csv'); }
     function exportExpenses(){ const csv='Date,Category,Description,Vendor,Amount\n'+expenses.map(e=>`${e.date},"${e.category}","${e.description}","${e.vendor}",${e.amount}`).join('\n'); downloadCSV(csv, 'expenses.csv'); }
-    function exportReport(){ alert('Report export coming soon'); }
+    function exportReport(){ customAlert('Coming Soon', 'The report export feature is under development.'); }
 
-    function generateReport(){ const type=document.getElementById('reportType').value; if(!type){ alert('Please select a report type'); return; } let html=''; if(type==='summary') html=generateSummaryReport(); if(type==='defaulters') html=generateDefaultersReport(); if(type==='expenses') html=generateExpenseReport(); if(type==='monthly') html='<p>Monthly breakdown report</p>'; document.getElementById('reportContent').innerHTML=html; }
+    function generateReport(){ const type=document.getElementById('reportType').value; if(!type){ customAlert('Input Required', 'Please select a report type to generate.'); return; } let html=''; if(type==='summary') html=generateSummaryReport(); if(type==='defaulters') html=generateDefaultersReport(); if(type==='expenses') html=generateExpenseReport(); if(type==='monthly') html='<p>Monthly breakdown report</p>'; document.getElementById('reportContent').innerHTML=html; }
     function generateSummaryReport(){ const totalMembers=members.length; const totalCollected=payments.reduce((s,p)=>s+p.amount,0); const totalExpenses=expenses.reduce((s,e)=>s+e.amount,0); const net=totalCollected-totalExpenses; return `<div class=\"stats\"><div class=\"stat-box\"><h3>Total Members</h3><div class=\"value\">${totalMembers}</div></div><div class=\"stat-box success\"><h3>Total Collected</h3><div class=\"value\">₹${totalCollected.toLocaleString()}</div></div><div class=\"stat-box error\"><h3>Total Expenses</h3><div class=\"value\">₹${totalExpenses.toLocaleString()}</div></div><div class=\"stat-box ${net>=0?'success':'error'}\"><h3>Net Balance</h3><div class=\"value\">₹${net.toLocaleString()}</div></div></div>`; }
     function generateDefaultersReport(){ const now=new Date(); const currentMonth=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`; const defaulters=members.filter(m=>getUnpaidMonths(m.id,currentMonth).length>0); return `<h3>Payment Defaulters (${defaulters.length} members)</h3><table style=\"width:100%; margin-top:16px;\"><thead><tr><th>Flat</th><th>Name</th><th>Unpaid Months</th><th>Total Due</th></tr></thead><tbody>${defaulters.map(m=>{ const unpaid=getUnpaidMonths(m.id,currentMonth); const due=unpaid.length*m.fee; return `<tr><td>${m.flat}</td><td>${m.name}</td><td style=\\\"color: var(--color-error);\\\">${unpaid.join(', ')}</td><td>₹${due.toLocaleString()}</td></tr>`; }).join('')}</tbody></table>`; }
     function generateExpenseReport(){ const cat={}; expenses.forEach(e=>{ cat[e.category]=(cat[e.category]||0)+e.amount; }); const total=Object.values(cat).reduce((s,v)=>s+v,0); return `<h3>Expense Analysis by Category</h3><table style=\"width:100%; margin-top:16px;\"><thead><tr><th>Category</th><th>Total Amount</th><th>Percentage</th></tr></thead><tbody>${Object.entries(cat).map(([k,amt])=>`<tr><td>${k}</td><td>₹${amt.toLocaleString()}</td><td>${total?((amt/total)*100).toFixed(1):0}%</td></tr>`).join('')}</tbody></table>`; }
 
     // ================== MEMBER DETAILS ==================
     function hideMemberDetails(){ document.getElementById('memberDetailsModal').style.display='none'; }
-    async function showMemberDetails(id){ const m=members.find(x=>x.id===id); if(!m) return; document.getElementById('memberDetailsName').textContent=`${m.name} (${m.flat})`; const memberPays=payments.filter(p=>p.memberId===id); const totalPaid=memberPays.reduce((s,p)=>s+p.amount,0); const joinDate=new Date(m.join); const today=new Date(); let expected=0; const cur=new Date(joinDate); while(cur<=today){ expected+=m.fee; cur.setMonth(cur.getMonth()+1);} const totalDue=expected-totalPaid; document.getElementById('memberTotalPaid').textContent='₹'+totalPaid.toLocaleString(); document.getElementById('memberTotalDue').textContent='₹'+totalDue.toLocaleString(); const list=document.getElementById('memberUnpaidMonths'); list.innerHTML=''; const currentMonth=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`; const unpaid=getUnpaidMonths(id,currentMonth); if(unpaid.length){ unpaid.forEach(mon=>{ const li=document.createElement('li'); li.style.display='flex'; li.style.justifyContent='space-between'; li.style.alignItems='center'; li.style.marginBottom='8px'; li.innerHTML=`<span style=\"color: var(--color-error);\">${mon}</span><button class=\"btn btn-primary btn-sm\" onclick=\"markMonthAsPaid(${id}, '${mon}')\">Mark as Paid</button>`; list.appendChild(li); }); } else { const li=document.createElement('li'); li.textContent='No unpaid months.'; li.style.color='var(--color-success)'; list.appendChild(li);} document.getElementById('memberDetailsModal').style.display='block'; }
-    async function markMonthAsPaid(memberId, monthFormatted){ const m=members.find(x=>x.id===memberId); if(!m) return; const [monName,year]=monthFormatted.split(' '); const monthIndex=new Date(Date.parse(monName+" 1, 2000")).getMonth()+1; const month=`${year}-${String(monthIndex).padStart(2,'0')}`; const payment={ id: nextPaymentId++, memberId, month, amount:m.fee, method:'Cash', date:new Date().toISOString().split('T')[0], notes:'Marked as paid' }; payments.push(payment); await saveDataToServer(); alert(`💰 ${m.name} - ${monthFormatted} marked as paid!`); loadPayments(); loadMembers(); updateFinancialSummary(); showMemberDetails(memberId); }
+    async function showMemberDetails(id){
+      const m=members.find(x=>x.id===id); if(!m) return;
+      document.getElementById('memberDetailsName').textContent=`${m.name} (${m.flat})`;
+      document.getElementById('memberDetailsPhoto').src = m.photo || 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 1 1\'%3E%3C/svg%3E';
+      const memberPays=payments.filter(p=>p.memberId===id); const totalPaid=memberPays.reduce((s,p)=>s+p.amount,0); const joinDate=new Date(m.join); const today=new Date(); let expected=0; const cur=new Date(joinDate); while(cur<=today){ const key=`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}`; expected+=getFeeForMonth(m, key); cur.setMonth(cur.getMonth()+1);} const totalDue=expected-totalPaid; document.getElementById('memberTotalPaid').textContent='₹'+totalPaid.toLocaleString(); document.getElementById('memberTotalDue').textContent='₹'+totalDue.toLocaleString(); const list=document.getElementById('memberUnpaidMonths'); list.innerHTML=''; const currentMonth=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`; const unpaid=getUnpaidMonths(id,currentMonth); if(unpaid.length){ unpaid.forEach(mon=>{ const li=document.createElement('li'); li.style.display='flex'; li.style.justifyContent='space-between'; li.style.alignItems='center'; li.style.marginBottom='8px'; li.innerHTML=`<span style=\"color: var(--color-error);\">${mon}</span><button class=\"btn btn-primary btn-sm\" onclick=\"markMonthAsPaid(${id}, '${mon}')\">Mark as Paid</button>`; list.appendChild(li); }); } else { const li=document.createElement('li'); li.textContent='No unpaid months.'; li.style.color='var(--color-success)'; list.appendChild(li);}
+      document.getElementById('memberDetailsModal').style.display='block';
+    }
+    async function markMonthAsPaid(memberId, monthFormatted){
+      const pin = await customPrompt('PIN Required', 'Please enter the 4-digit PIN to confirm payment.');
+      if (pin === null) return; // User cancelled
+      if (pin !== '2024') {
+        customAlert('Error', 'Incorrect PIN. Payment was not recorded.');
+        return;
+      }
+      const m=members.find(x=>x.id===memberId); if(!m) return; const [monName,year]=monthFormatted.split(' '); const monthIndex=new Date(Date.parse(monName+" 1, 2000")).getMonth()+1; const month=`${year}-${String(monthIndex).padStart(2,'0')}`; const feeForMonth = getFeeForMonth(m, month); const payment={ id: nextPaymentId++, memberId, month, amount:feeForMonth, method:'Cash', date:new Date().toISOString().split('T')[0], notes:'Marked as paid' }; payments.push(payment); await saveDataToServer(); customAlert('Success', `💰 ${m.name} - ${monthFormatted} marked as paid!`); loadPayments(); loadMembers(); updateFinancialSummary(); showMemberDetails(memberId);
+    }
+
+    // ================== OVERVIEW ==================
+    function updateRecentActivity() {
+      const container = document.getElementById('recentActivity');
+      if (!container) return;
+      const paymentActivities = payments.map(p => { const m = members.find(x => x.id === p.memberId); return { type: 'payment', date: new Date(p.date), amount: p.amount, description: `Payment from <strong>${m ? m.name : 'Unknown'}</strong> for ${formatMonth(p.month)}` }; });
+      const expenseActivities = expenses.map(e => ({ type: 'expense', date: new Date(e.date), amount: e.amount, description: `Expense for <strong>${e.category}</strong>: ${e.description}` }));
+      const allActivities = [...paymentActivities, ...expenseActivities].sort((a, b) => b.date - a.date).slice(0, 5);
+
+      if (allActivities.length === 0) {
+        container.innerHTML = '<p style="color:var(--color-text-light);text-align:center;padding:20px;">No recent activity to display.</p>';
+        return;
+      }
+
+      container.innerHTML = allActivities.map(act => {
+        const isPayment = act.type === 'payment';
+        const amountColor = isPayment ? 'var(--color-success)' : 'var(--color-error)';
+        const amountSign = isPayment ? '' : '-';
+        return `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--color-border);">
+            <div><p style="margin-bottom:2px;">${act.description}</p><small style="color:var(--color-text-light);">${act.date.toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'})}</small></div>
+            <div style="font-weight:600; color:${amountColor}; white-space:nowrap; margin-left:16px;">${amountSign} ₹${act.amount.toLocaleString()}</div>
+          </div>`;
+      }).join('');
+    }
 
     // ================== TOTALS ==================
     function updateFinancialSummary(){ const totalCollected=payments.reduce((s,p)=>s+p.amount,0); const totalExpenses=expenses.reduce((s,e)=>s+e.amount,0); const net=totalCollected-totalExpenses; document.getElementById('totalCollected').textContent='₹'+totalCollected.toLocaleString(); document.getElementById('totalExpenses').textContent='₹'+totalExpenses.toLocaleString(); document.getElementById('netBalance').textContent='₹'+net.toLocaleString(); const parent=document.getElementById('netBalance').closest('.stat-box'); parent.className='stat-box '+(net>=0?'success':'error'); }
@@ -398,14 +556,27 @@
 
       await loadDataFromServer();
       document.getElementById('totalMembers').textContent = members.length;
-      loadMembers(); loadPayments(); loadExpenses(); updateMonthReport(); updateFinancialSummary();
+      loadMembers(); loadPayments(); loadExpenses(); updateMonthReport(); updateFinancialSummary(); updateRecentActivity();
 
       // Forms
-      document.getElementById('paymentForm')?.addEventListener('submit', async function(e){ e.preventDefault(); const payment={ id: nextPaymentId++, memberId: parseInt(document.getElementById('paymentMember').value), month: document.getElementById('paymentMonth').value, amount: parseFloat(document.getElementById('paymentAmount').value), method: document.getElementById('paymentMethod').value, date: todayStr, notes: document.getElementById('paymentNotes').value }; payments.push(payment); await saveDataToServer(); loadPayments(); updateFinancialSummary(); this.reset(); alert('💰 Payment recorded successfully!'); });
+      document.getElementById('paymentForm')?.addEventListener('submit', async function(e){ e.preventDefault(); const payment={ id: nextPaymentId++, memberId: parseInt(document.getElementById('paymentMember').value), month: document.getElementById('paymentMonth').value, amount: parseFloat(document.getElementById('paymentAmount').value), method: document.getElementById('paymentMethod').value, date: todayStr, notes: document.getElementById('paymentNotes').value }; payments.push(payment); await saveDataToServer(); loadPayments(); updateFinancialSummary(); updateRecentActivity(); this.reset(); customAlert('Success', '💰 Payment recorded successfully!'); });
 
-      document.getElementById('expenseForm')?.addEventListener('submit', async function(e){ e.preventDefault(); const file=document.getElementById('expenseReceipt').files[0]; const done= async (b64)=>{ const expense={ date: document.getElementById('expenseDate').value, category: document.getElementById('expenseCategory').value, description: document.getElementById('expenseDescription').value, vendor: document.getElementById('expenseVendor').value, amount: parseFloat(document.getElementById('expenseAmount').value), receipt: b64||null }; expenses.push(expense); await saveDataToServer(); loadExpenses(); this.reset(); alert('💸 Expense added successfully!'); }; if(file){ const r=new FileReader(); r.onload=async e=>{ await done(e.target.result); }; r.readAsDataURL(file);} else await done(null); });
+      document.getElementById('expenseForm')?.addEventListener('submit', async function(e){ e.preventDefault(); const file=document.getElementById('expenseReceipt').files[0]; const done= async (b64)=>{ const expense={ date: document.getElementById('expenseDate').value, category: document.getElementById('expenseCategory').value, description: document.getElementById('expenseDescription').value, vendor: document.getElementById('expenseVendor').value, amount: parseFloat(document.getElementById('expenseAmount').value), receipt: b64||null }; expenses.push(expense); await saveDataToServer(); loadExpenses(); updateRecentActivity(); this.reset(); customAlert('Success', '💸 Expense added successfully!'); }; if(file){ const r=new FileReader(); r.onload=async e=>{ await done(e.target.result); }; r.readAsDataURL(file);} else await done(null); });
 
-      document.getElementById('addMemberForm')?.addEventListener('submit', async function(e){ e.preventDefault(); const editId=this.dataset.editId; const file=document.getElementById('newPhoto').files[0]; const handle= async (b64)=>{ if(editId){ const m=members.find(x=>x.id===parseInt(editId)); if(m){ m.flat=document.getElementById('newFlat').value; m.name=document.getElementById('newName').value; m.fee=parseFloat(document.getElementById('newFee').value); m.join=document.getElementById('newJoinDate').value; if(b64) m.photo=b64; } alert('✏️ Member updated successfully!'); delete this.dataset.editId; } else { const m={ id: nextMemberId++, flat: document.getElementById('newFlat').value, name: document.getElementById('newName').value, fee: parseFloat(document.getElementById('newFee').value), join: document.getElementById('newJoinDate').value, photo: b64||'' }; members.push(m); document.getElementById('totalMembers').textContent = members.length; alert('👥 Member added successfully!'); } await saveDataToServer(); loadMembers(); hideAddMember(); this.reset(); }; if(file){ const r=new FileReader(); r.onload=async e=>{ await handle(e.target.result); }; r.readAsDataURL(file);} else await handle(null); });
+      document.getElementById('addMemberForm')?.addEventListener('submit', async function(e){
+        e.preventDefault();
+        const pin = await customPrompt('PIN Required', 'Please enter the 4-digit PIN to save.');
+        if (pin === null) return;
+        if (pin !== '2024') {
+          customAlert('Error', 'Incorrect PIN. Member was not saved.');
+          return;
+        }
+
+        const editId=this.dataset.editId;
+        const file=document.getElementById('newPhoto').files[0];
+        const handle= async (b64)=>{ if(editId){ const m=members.find(x=>x.id===parseInt(editId)); if(m){ m.flat=document.getElementById('newFlat').value; m.name=document.getElementById('newName').value; m.fee=parseFloat(document.getElementById('newFee').value); m.join=document.getElementById('newJoinDate').value; if(b64) m.photo=b64; } customAlert('Success', '✏️ Member updated successfully!'); delete this.dataset.editId; } else { const m={ id: nextMemberId++, flat: document.getElementById('newFlat').value, name: document.getElementById('newName').value, fee: parseFloat(document.getElementById('newFee').value), join: document.getElementById('newJoinDate').value, photo: b64||'' }; members.push(m); document.getElementById('totalMembers').textContent = members.length; customAlert('Success', '👥 Member added successfully!'); } await saveDataToServer(); loadMembers(); hideAddMember(); this.reset(); };
+        if(file){ const r=new FileReader(); r.onload=async e=>{ await handle(e.target.result); }; r.readAsDataURL(file);} else await handle(null);
+      });
 
       // Smoke tests (console)
       try{
