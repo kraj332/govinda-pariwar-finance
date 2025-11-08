@@ -541,13 +541,45 @@
     function downloadCSV(content, filename){ const blob=new Blob([content],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url); }
     function exportMembers(){ const csv='Flat,Name,Monthly Fee,Join Date,Status\n'+members.map(m=>`${m.flat},"${m.name}",${m.fee},${m.join},Active`).join('\n'); downloadCSV(csv, 'members.csv'); }
     function exportPayments(){ const csv='Date,Member,Month,Amount,Method,Notes\n'+payments.map(p=>{ const m=members.find(x=>x.id===p.memberId); return `${p.date},"${m?m.name:'Unknown'}",${p.month},${p.amount},${p.method},"${p.notes||''}"`; }).join('\n'); downloadCSV(csv, 'payments.csv'); }
-    function exportExpenses(){ const csv='Date,Category,Description,Vendor,Amount\n'+expenses.map(e=>`${e.date},"${e.category}","${e.description}","${e.vendor}",${e.amount}`).join('\n'); downloadCSV(csv, 'expenses.csv'); }
+    function exportExpenses(){ const csv='Date,Category,Description,Vendor,Amount\n'+expenses.map(e=>`${e.date},"${e.category}","${e.description.replace(/"/g, '""')}","${e.vendor.replace(/"/g, '""')}",${e.amount}`).join('\n'); downloadCSV(csv, 'expenses.csv'); }
     function exportReport(){ customAlert('Coming Soon', 'The report export feature is under development.'); }
 
-    function generateReport(){ const type=document.getElementById('reportType').value; if(!type){ customAlert('Input Required', 'Please select a report type to generate.'); return; } let html=''; if(type==='summary') html=generateSummaryReport(); if(type==='defaulters') html=generateDefaultersReport(); if(type==='expenses') html=generateExpenseReport(); if(type==='monthly') html='<p>Monthly breakdown report</p>'; document.getElementById('reportContent').innerHTML=html; }
-    function generateSummaryReport(){ const totalMembers=members.length; const totalCollected=payments.reduce((s,p)=>s+p.amount,0); const totalExpenses=expenses.reduce((s,e)=>s+e.amount,0); const net=totalCollected-totalExpenses; return `<div class=\"stats\"><div class=\"stat-box\"><h3>Total Members</h3><div class=\"value\">${totalMembers}</div></div><div class=\"stat-box success\"><h3>Total Collected</h3><div class=\"value\">₹${totalCollected.toLocaleString()}</div></div><div class=\"stat-box error\"><h3>Total Expenses</h3><div class=\"value\">₹${totalExpenses.toLocaleString()}</div></div><div class=\"stat-box ${net>=0?'success':'error'}\"><h3>Net Balance</h3><div class=\"value\">₹${net.toLocaleString()}</div></div></div>`; }
-    function generateDefaultersReport(){ const now=new Date(); const currentMonth=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`; const defaulters=members.filter(m=>getUnpaidMonths(m.id,currentMonth).length>0); return `<h3>Payment Defaulters (${defaulters.length} members)</h3><table style=\"width:100%; margin-top:16px;\"><thead><tr><th>Flat</th><th>Name</th><th>Unpaid Months</th><th>Total Due</th></tr></thead><tbody>${defaulters.map(m=>{ const unpaid=getUnpaidMonths(m.id,currentMonth); const due=unpaid.length*m.fee; return `<tr><td>${m.flat}</td><td>${m.name}</td><td style=\\\"color: var(--color-error);\\\">${unpaid.join(', ')}</td><td>₹${due.toLocaleString()}</td></tr>`; }).join('')}</tbody></table>`; }
-    function generateExpenseReport(){ const cat={}; expenses.forEach(e=>{ cat[e.category]=(cat[e.category]||0)+e.amount; }); const total=Object.values(cat).reduce((s,v)=>s+v,0); return `<h3>Expense Analysis by Category</h3><table style=\"width:100%; margin-top:16px;\"><thead><tr><th>Category</th><th>Total Amount</th><th>Percentage</th></tr></thead><tbody>${Object.entries(cat).map(([k,amt])=>`<tr><td>${k}</td><td>₹${amt.toLocaleString()}</td><td>${total?((amt/total)*100).toFixed(1):0}%</td></tr>`).join('')}</tbody></table>`; }
+    function generateReport(){ const type=document.getElementById('reportType').value; if(!type){ customAlert('Input Required', 'Please select a report type to generate.'); return; } let html=''; if(type==='summary') html=generateSummaryReport(); if(type==='defaulters') html=generateDefaultersReport(); if(type==='expenses') html=generateExpenseReport(); if(type==='monthly') html=generateMonthlyBreakdownReport(); document.getElementById('reportContent').innerHTML=html; }
+    function generateSummaryReport(){
+      const from = document.getElementById('reportFrom').value;
+      const to = document.getElementById('reportTo').value;
+      // Handle empty date filters gracefully
+      const filteredPayments = payments.filter(p => (!from || p.month >= from) && (!to || p.month <= to));
+      const filteredExpenses = expenses.filter(e => (!from || e.date.substring(0, 7) >= from) && (!to || e.date.substring(0, 7) <= to));
+      const totalMembers=members.length; const totalCollected=filteredPayments.reduce((s,p)=>s+p.amount,0); const totalExpenses=filteredExpenses.reduce((s,e)=>s+e.amount,0); const net=totalCollected-totalExpenses; return `<div class=\"stats\"><div class=\"stat-box\"><h3>Total Members</h3><div class=\"value\">${totalMembers}</div></div><div class=\"stat-box success\"><h3>Total Collected</h3><div class=\"value\">₹${totalCollected.toLocaleString()}</div></div><div class=\"stat-box error\"><h3>Total Expenses</h3><div class=\"value\">₹${totalExpenses.toLocaleString()}</div></div><div class=\"stat-box ${net>=0?'success':'error'}\"><h3>Net Balance</h3><div class=\"value\">₹${net.toLocaleString()}</div></div></div>`;
+    }
+    function generateDefaultersReport(){
+      const to = document.getElementById('reportTo').value;
+      if (!to) { return '<p style="color: var(--color-error); text-align: center;">Please select a "To" date for the defaulters report.</p>'; }
+      const defaulters=members.filter(m=>getUnpaidMonths(m.id,to).length>0); return `<h3>Payment Defaulters as of ${formatMonth(to)} (${defaulters.length} members)</h3><table style=\"width:100%; margin-top:16px;\"><thead><tr><th>Flat</th><th>Name</th><th>Unpaid Months</th></tr></thead><tbody>${defaulters.map(m=>{ const unpaid=getUnpaidMonths(m.id,to); return `<tr><td>${m.flat}</td><td>${m.name}</td><td style=\"color: var(--color-error);\">${unpaid.join(', ')}</td></tr>`; }).join('')}</tbody></table>`;
+    }
+    function generateExpenseReport(){
+      const from = document.getElementById('reportFrom').value;
+      const to = document.getElementById('reportTo').value;
+      // Handle empty date filters gracefully
+      const filteredExpenses = expenses.filter(e => (!from || e.date.substring(0, 7) >= from) && (!to || e.date.substring(0, 7) <= to));
+      const cat={}; filteredExpenses.forEach(e=>{ cat[e.category]=(cat[e.category]||0)+e.amount; }); const total=Object.values(cat).reduce((s,v)=>s+v,0); return `<h3>Expense Analysis by Category</h3><table style=\"width:100%; margin-top:16px;\"><thead><tr><th>Category</th><th>Total Amount</th><th>Percentage</th></tr></thead><tbody>${Object.entries(cat).map(([k,amt])=>`<tr><td>${k}</td><td>₹${amt.toLocaleString()}</td><td>${total?((amt/total)*100).toFixed(1):0}%</td></tr>`).join('')}</tbody></table>`;
+    }
+    function generateMonthlyBreakdownReport() {
+      const from = document.getElementById('reportFrom').value; const to = document.getElementById('reportTo').value;
+      if (!from || !to) { return '<p style="color: var(--color-error); text-align: center;">Please select both a "From" and "To" date for this report.</p>'; }
+      let html = `<h3>Monthly Breakdown (${formatMonth(from)} to ${formatMonth(to)})</h3><table style="width:100%; margin-top:16px;"><thead><tr><th>Month</th><th>Expected</th><th>Collected</th><th>Expenses</th><th>Net Balance</th></tr></thead><tbody>`;
+      const start = new Date(from + '-01'); const end = new Date(to + '-01');
+      for (let d = new Date(start); d <= end; d.setMonth(d.getMonth() + 1)) {
+        const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        const expected = members.reduce((sum, m) => sum + getFeeForMonth(m, monthKey), 0);
+        const collected = payments.filter(p => p.month === monthKey).reduce((sum, p) => sum + p.amount, 0);
+        const monthExpenses = expenses.filter(e => e.date.startsWith(monthKey)).reduce((sum, e) => sum + e.amount, 0);
+        const net = collected - monthExpenses;
+        html += `<tr><td>${formatMonth(monthKey)}</td><td>₹${expected.toLocaleString()}</td><td>₹${collected.toLocaleString()}</td><td>₹${monthExpenses.toLocaleString()}</td><td style="color:${net >= 0 ? 'var(--color-success)' : 'var(--color-error)'}">₹${net.toLocaleString()}</td></tr>`;
+      }
+      return html + '</tbody></table>';
+    }
 
     // ================== MEMBER DETAILS ==================
     function hideMemberDetails(){ document.getElementById('memberDetailsModal').style.display='none'; }
