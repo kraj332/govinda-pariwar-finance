@@ -58,7 +58,18 @@
     .tab-content.active{display:block;opacity:1}
     @media (max-width:768px){.tabs{gap:0}.tab{font-size:13px;padding:8px 10px}.stat-box .value{font-size:28px}}
     .modal-backdrop{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:2000;padding:20px;align-items:center;justify-content:center}
-    .avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;margin-right:12px;vertical-align:middle;background:var(--color-border);border:2px solid var(--color-surface)}
+    .avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;margin-right:12px;vertical-align:middle;background:var(--color-border);border:2px solid var(--color-surface);flex-shrink:0}
+    @media (max-width: 768px) {
+      #membersOverviewTable th, #membersOverviewTable td {
+        padding: 12px 5px;
+        font-size: 11px;
+        text-align: center;
+      }
+      #membersOverviewTable th:first-child, #membersOverviewTable td:first-child {
+        text-align: left;
+        padding-left: 8px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -396,7 +407,12 @@
 
       // FY April-March
       const now = new Date(); const fyStart = 3; const months=[]; for(let i=0;i<12;i++){ months.push(new Date(now.getFullYear(), fyStart+i, 1)); }
-      thead.innerHTML = `<th>Name</th><th>Paid Months</th><th>Balance Due</th>` + months.map(d=>`<th>${d.toLocaleDateString('en-IN',{month:'short'})}</th>`).join('') + `<th>Actions</th>`;
+      const isMobile = window.innerWidth < 768;
+      const monthHeaders = months.map(d => {
+        const monthName = d.toLocaleDateString('en-IN', { month: 'short' });
+        return `<th>${isMobile ? monthName.charAt(0) : monthName}</th>`;
+      }).join('');
+      thead.innerHTML = `<th>Name</th><th>Paid</th><th>Due</th>` + monthHeaders + `<th>Actions</th>`;
 
       tbody.innerHTML = filtered.map(m=>{
         const pays = payments.filter(p=>p.memberId===m.id);
