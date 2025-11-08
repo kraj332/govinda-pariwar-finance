@@ -302,7 +302,7 @@
       } catch(err) {
         console.error('Save failed, caching locally', err);
         try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }catch(e){}
-        customAlert('⚠️ Connection Error', 'Changes saved locally. They will sync automatically when the connection is restored.');
+        customAlert('⚠️ Offline Mode', 'Connection failed. Your changes have been saved locally and will sync later.');
       }
     }
 
@@ -470,14 +470,19 @@
     }
 
     async function deletePayment(id){
-      const confirmed = await customConfirm('Delete Payment?', 'Are you sure you want to delete this payment record?');
+      const confirmed = await customConfirm('Delete Payment?', 'Are you sure you want to delete this payment record? This cannot be undone.');
       if (confirmed) {
+        const pin = await customPrompt('PIN Required', 'Enter the 4-digit PIN to confirm deletion.');
+        if (pin !== '2024') {
+          customAlert('Error', 'Incorrect PIN. Deletion cancelled.');
+          return;
+        }
         payments = payments.filter(p=>p.id!==id); await saveDataToServer(); loadPayments(); updateFinancialSummary(); customAlert('Success', '🗑️ Payment deleted!');
       }
     }
 
     // ================== MONTHLY REPORT ==================
-    function getUnpaidMonths(memberId, upToMonth){ const m=members.find(x=>x.id===memberId); if(!m) return []; const joinDate=new Date(m.join); const endDate=new Date(upToMonth+'-01'); const unpaid=[]; const pays=payments.filter(p=>p.memberId===memberId); const cur=new Date(joinDate); while(cur<=endDate){ const key=`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}`; const paidForMonth=pays.filter(p=>p.month===key); const totalPaidForMonth = paidForMonth.reduce((sum, p) => sum + p.amount, 0); const feeForMonth = getFeeForMonth(m, key); if(totalPaidForMonth < feeForMonth) unpaid.push(formatMonth(key)); cur.setMonth(cur.getMonth()+1);} return unpaid; }
+    function getUnpaidMonths(memberId, upToMonth){ const m=members.find(x=>x.id===memberId); if(!m) return []; const joinDate=new Date(m.join); const endDate=new Date(upToMonth+'-01'); const unpaid=[]; const pays=payments.filter(p=>p.memberId===memberId); const cur=new Date(joinDate); while(cur<=endDate){ const key=`${cur.getFullYear()}-${String(cur.getMonth()+1).padStart(2,'0')}`; const paidForMonth=pays.filter(p=>p.month===key); const totalPaidForMonth = paidForMonth.reduce((sum, p) => sum + p.amount, 0); const feeForMonth = getFeeForMonth(m, key); if(totalPaidForMonth < feeForMonth) unpaid.push(formatMonth(key)); cur.setMonth(cur.getMonth()+1);} return unpaid; } //NOSONAR
 
     function updateMonthReport(){ const month=document.getElementById('reportMonth').value; if(!month) return; const monthPays=payments.filter(p=>p.month===month); const collected=monthPays.reduce((s,p)=>s+p.amount,0); const expected=members.reduce((s,m)=>s+getFeeForMonth(m, month),0); const monthExp=expenses.filter(e=>e.date.startsWith(month)).reduce((s,e)=>s+e.amount,0); document.getElementById('monthExpected').textContent='₹'+expected.toLocaleString(); document.getElementById('monthCollected').textContent='₹'+collected.toLocaleString(); document.getElementById('monthExpenses').textContent='₹'+monthExp.toLocaleString(); document.getElementById('monthBalance').textContent='₹'+(collected-monthExp).toLocaleString(); const tbody=document.getElementById('monthPaymentBody'); tbody.innerHTML = members.map(m=>{ const feeForMonth = getFeeForMonth(m, month); const paid=monthPays.filter(p=>p.memberId===m.id); const totalPaid=paid.reduce((s,p)=>s+p.amount,0); const due=feeForMonth-totalPaid; const status= due<=0?'Paid':(totalPaid>0?'Partial':'Pending'); const unpaid=getUnpaidMonths(m.id, month); return `<tr><td>${m.flat}</td><td>${m.name}</td><td>₹${feeForMonth}</td><td>₹${totalPaid}</td><td style="color:${due>0?'var(--color-error)':'var(--color-success)'}">₹${due}</td><td><span class="badge ${status==='Paid'?'badge-success':(status==='Partial'?'badge-pending':'badge-danger')}">${status}</span></td><td style="font-size:11px; color: var(--color-error)">${unpaid.length?unpaid.join(', '):'-'}</td></tr>`; }).join(''); }
 
@@ -485,8 +490,13 @@
     function loadExpenses(){ const tbody=document.getElementById('expensesBody'); if(!expenses.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--color-text-light)">No expenses recorded yet</td></tr>'; } else { tbody.innerHTML = expenses.slice().reverse().map((e,idx)=>`<tr><td>${formatDate(e.date)}</td><td>${e.category}</td><td>${e.description}</td><td>${e.vendor}</td><td>₹${e.amount.toLocaleString()}</td><td>${e.receipt?`<a href="${e.receipt}" target="_blank">📎 View</a>`:'-'}</td><td><button class="btn btn-danger btn-sm" onclick="deleteExpense(${expenses.length-1-idx})">🗑️</button></td></tr>`).join(''); } updateFinancialSummary(); }
 
     async function deleteExpense(index){
-      const confirmed = await customConfirm('Delete Expense?', 'Are you sure you want to delete this expense record?');
+      const confirmed = await customConfirm('Delete Expense?', 'Are you sure you want to delete this expense record? This cannot be undone.');
       if (confirmed) {
+        const pin = await customPrompt('PIN Required', 'Enter the 4-digit PIN to confirm deletion.');
+        if (pin !== '2024') {
+          customAlert('Error', 'Incorrect PIN. Deletion cancelled.');
+          return;
+        }
         expenses.splice(index,1); await saveDataToServer(); loadExpenses(); customAlert('Success', '🗑️ Expense deleted!');
       }
     }
@@ -559,9 +569,23 @@
       loadMembers(); loadPayments(); loadExpenses(); updateMonthReport(); updateFinancialSummary(); updateRecentActivity();
 
       // Forms
-      document.getElementById('paymentForm')?.addEventListener('submit', async function(e){ e.preventDefault(); const payment={ id: nextPaymentId++, memberId: parseInt(document.getElementById('paymentMember').value), month: document.getElementById('paymentMonth').value, amount: parseFloat(document.getElementById('paymentAmount').value), method: document.getElementById('paymentMethod').value, date: todayStr, notes: document.getElementById('paymentNotes').value }; payments.push(payment); await saveDataToServer(); loadPayments(); updateFinancialSummary(); updateRecentActivity(); this.reset(); customAlert('Success', '💰 Payment recorded successfully!'); });
+      document.getElementById('paymentForm')?.addEventListener('submit', async function(e){
+        e.preventDefault();
+        const pin = await customPrompt('PIN Required', 'Enter PIN to record payment.');
+        if (pin !== '2024') { customAlert('Error', 'Incorrect PIN.'); return; }
+        const payment={ id: nextPaymentId++, memberId: parseInt(document.getElementById('paymentMember').value), month: document.getElementById('paymentMonth').value, amount: parseFloat(document.getElementById('paymentAmount').value), method: document.getElementById('paymentMethod').value, date: todayStr, notes: document.getElementById('paymentNotes').value };
+        payments.push(payment);
+        await saveDataToServer();
+        loadPayments(); updateFinancialSummary(); updateRecentActivity(); this.reset(); customAlert('Success', '💰 Payment recorded successfully!');
+      });
 
-      document.getElementById('expenseForm')?.addEventListener('submit', async function(e){ e.preventDefault(); const file=document.getElementById('expenseReceipt').files[0]; const done= async (b64)=>{ const expense={ date: document.getElementById('expenseDate').value, category: document.getElementById('expenseCategory').value, description: document.getElementById('expenseDescription').value, vendor: document.getElementById('expenseVendor').value, amount: parseFloat(document.getElementById('expenseAmount').value), receipt: b64||null }; expenses.push(expense); await saveDataToServer(); loadExpenses(); updateRecentActivity(); this.reset(); customAlert('Success', '💸 Expense added successfully!'); }; if(file){ const r=new FileReader(); r.onload=async e=>{ await done(e.target.result); }; r.readAsDataURL(file);} else await done(null); });
+      document.getElementById('expenseForm')?.addEventListener('submit', async function(e){
+        e.preventDefault();
+        const pin = await customPrompt('PIN Required', 'Enter PIN to add expense.');
+        if (pin !== '2024') { customAlert('Error', 'Incorrect PIN.'); return; }
+        const file=document.getElementById('expenseReceipt').files[0];
+        const done= async (b64)=>{ const expense={ date: document.getElementById('expenseDate').value, category: document.getElementById('expenseCategory').value, description: document.getElementById('expenseDescription').value, vendor: document.getElementById('expenseVendor').value, amount: parseFloat(document.getElementById('expenseAmount').value), receipt: b64||null }; expenses.push(expense); await saveDataToServer(); loadExpenses(); updateRecentActivity(); this.reset(); customAlert('Success', '💸 Expense added successfully!'); }; if(file){ const r=new FileReader(); r.onload=async e=>{ await done(e.target.result); }; r.readAsDataURL(file);} else await done(null);
+      });
 
       document.getElementById('addMemberForm')?.addEventListener('submit', async function(e){
         e.preventDefault();
